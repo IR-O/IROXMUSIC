@@ -10,11 +10,12 @@ from typing import (
 )
 
 import random
-import pymongo  # PyMongo is a Python driver for MongoDB
+from pymongo import MongoClient
+from motor.motor_asyncio import AsyncIOMongoClient  # Using AsyncIOMongoClient for asynchronous MongoDB connection
 from IroXMusic import userbot  # Importing the userbot module from IroXMusic package
 
-# Creating a connection to MongoDB
-mongo_client = pymongo.MongoClient()
+# Creating an asynchronous connection to MongoDB
+mongo_client = AsyncIOMongoClient()
 
 # Selecting the database 'IroXMusic'
 db = mongo_client.IroXMusic
@@ -53,4 +54,4 @@ final_vars: FinalVars = {
     "loop": {},
     "maintenance": [],
     "nonadmin": {},
-
+}
