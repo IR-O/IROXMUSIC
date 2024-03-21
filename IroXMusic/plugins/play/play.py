@@ -1,45 +1,31 @@
-import os
-import random
-import string
-import time
-from typing import Any
-from typing import Dict
-from typing import List
-from typing import Union
+import os  # Importing the os module to interact with the operating system
+import random  # Importing the random module to generate random values
+import string  # Importing the string module for string manipulation
+import time  # Importing the time module to work with time
+from typing import Any  # Importing Any from typing module
+from typing import Dict  # Importing Dict from typing module
+from typing import List  # Importing List from typing module
+from typing import Union  # Importing Union from typing module
 
-import aiohttp
-import aiohttp.client_exceptions
-import aiohttp.web
-import requests
-from bs4 import BeautifulSoup
-from pyrogram import filters
-from pyrogram.errors import FloodWait
-from pyrogram.errors import MessageNotModified
-from pyrogram.errors import RPCError
-from pyrogram.types import InlineKeyboardButton
-from pyrogram.types import InlineKeyboardMarkup
-from pyrogram.types import InputMediaPhoto
-from pyrogram.types import Message
-from pytgcalls.exceptions import NoActiveGroupCall
+import aiohttp  # Asynchronous HTTP client/server for Python
+import aiohttp.client_exceptions  # Exceptions for aiohttp
+import aiohttp.web  # Web framework for aiohttp
+import requests  # Python HTTP Library
+from bs4 import BeautifulSoup  # HTML/XML Parser for Python
+from pyrogram import filters  # Filters for Pyrogram
+from pyrogram.errors import FloodWait  # FloodWait exception for Pyrogram
+from pyrogram.errors import MessageNotModified  # MessageNotModified exception for Pyrogram
+from pyrogram.errors import RPCError  # RPCError exception for Pyrogram
+from pyrogram.types import InlineKeyboardButton  # Inline keyboard button for Pyrogram
+from pyrogram.types import InlineKeyboardMarkup  # Inline keyboard markup for Pyrogram
+from pyrogram.types import InputMediaPhoto  # Input media photo for Pyrogram
+from pyrogram.types import Message  # Message object for Pyrogram
+from pytgcalls.exceptions import NoActiveGroupCall  # NoActiveGroupCall exception for pytgcalls
 
-import config
-from IroXMusic import Apple, Resso, SoundCloud, Spotify, Telegram, YouTube, app
-from IroXMusic.core.call import Irop
-from IroXMusic.utils import seconds_to_min
-from IroXMusic.utils import time_to_seconds
-from IroXMusic.utils.channelplay import get_channeplayCB
-from IroXMusic.utils.decorators.language import languageCB
-from IroXMusic.utils.decorators.play import PlayWrapper
-from IroXMusic.utils.formatters import formats
-from IroXMusic.utils.inline import (
-    botplaylist_markup,
-    livestream_markup,
-    playlist_markup,
-    slider_markup,
-    track_markup,
-)
-from IroXMusic.utils.logger import play_logs
-from IroXMusic.utils.stream.stream import stream
-from config import BANNED_USERS
-from config import lyrical
-
+import config  # Importing config.py module for configuration settings
+from IroXMusic import Apple, Resso, SoundCloud, Spotify, Telegram, YouTube, app  # Importing various modules for IroXMusic
+from IroXMusic.core.call import Irop  # Importing Irop class from call.py
+from IroXMusic.utils import seconds_to_min  # Function to convert seconds to minutes
+from IroXMusic.utils import time_to_seconds  # Function to convert time to seconds
+from IroXMusic.utils.channelplay import get_channeplayCB  # Function to get channel play callback
+from IroXMusic.utils.decorators.language import languageCB  #
