@@ -1,6 +1,8 @@
 from pyrogram import filters
 from pyrogram.types import Message
 
+from pyrogram.errors import ChatAdminRequired
+
 from IroXMusic import app
 from IroXMusic.misc import SUDOERS, LOVE
 from IroXMusic.utils.database import (
@@ -19,21 +21,26 @@ async def maintenance(client, message: Message):
         _ = get_string(language)
     except:
         _ = get_string("en")
+        await message.reply_text(_["error_chat_language"])
+        return
     usage = _["maint_1"]
     if len(message.command) != 2:
         return await message.reply_text(usage)
     state = message.text.split(None, 1)[1].strip().lower()
+    if state not in ["enable", "disable"]:
+        await message.reply_text(usage)
+        return
     if state == "enable":
-        if await is_maintenance() is False:
+        if await is_maintenance():
             await message.reply_text(_["maint_4"])
         else:
-            await maintenance_on()
-            await message.reply_text(_["maint_2"].format(app.mention))
+            try:
+                await maintenance_on()
+                await message.reply_text(_["maint_2"].format(app.mention))
+            except ChatAdminRequired:
+                await message.reply_text(_["error_admin_required"])
     elif state == "disable":
-        if await is_maintenance() is False:
-            await maintenance_off()
-            await message.reply_text(_["maint_3"].format(app.mention))
-        else:
-            await message.reply_text(_["maint_5"])
-    else:
-        await message.reply_text(usage)
+        if not await is_maintenance():
+            try:
+                await maintenance_off()
+                await message.reply_text(_["
