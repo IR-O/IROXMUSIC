@@ -3,20 +3,17 @@ import os
 import pathlib
 import snmp
 import functools
-
 import pyrogram
 from pyrogram import Client, filters, raw
 from pyrogram.errors import FloodWait
 from pyrogram.types import CallbackQuery, InputMediaPhoto, Message
 from snmp import TimeTicks
 
-from IroXMusic import app
-from IroXMusic.misc import db
-from IroXMusic.utils import IropBin, get_cmode, get_duration, get_image, get_seconds, get_seconds_to_min, is_active_chat, is_music_playing
+import config
+from IroXMusic import app, db, get_cmode, get_duration, get_image, get_seconds, get_seconds_to_min, is_active_chat, is_music_playing
 from IroXMusic.utils.database import get_cmode, is_active_chat, is_music_playing
 from IroXMusic.utils.decorators.language import language, languageCB
 from IroXMusic.utils.inline import queue_back_markup, queue_markup
-from config import BANNED_USERS, config
 
 # Initialize an empty dictionary to store video IDs
 basic = {}
@@ -24,7 +21,6 @@ basic = {}
 # A decorator to cache the result of get_channeplayCB function
 @functools.lru_cache()
 def get_channeplayCB(client, what, message):
-    # Resolve the chat ID and channel
     try:
         chat_id = client.resolve_peer(message.chat.id)["chat_id"]
     except:
@@ -42,13 +38,14 @@ def get_channeplayCB(client, what, message):
 @app.on_message(
     filters.command(["queue", "cqueue", "player", "cplayer", "playing", "cplaying"])
     & filters.group(True)
-    & ~BANNED_USERS
+    & ~pyrogram.filters.UserFilter(config.BANNED_USERS)
 )
 @language
 async def get_queue(client, message: Message, _):
     # Check if the command is for a channel
+    cplay = False
     if message.command[0][0] == "c":
-        chat_id, channel = await get_channeplayCB(_, message.command[0][1], message)
+        chat_id, channel = await get_channeplayCB(client, message.command[0][1], message)
         if chat_id is None:
             return await message.reply_text(_["setting_7"])
         try:
@@ -59,7 +56,6 @@ async def get_queue(client, message: Message, _):
         cplay = True
     else:
         chat_id = message.chat.id
-        cplay = False
     # Check if the chat is active
     if not await is_active_chat(chat_id):
         return await message.reply_text(_["general_5"])
@@ -136,4 +132,6 @@ async def get_queue(client, message: Message, _):
 
 
 # A callback function to handle the GetTimer callback query
-@app.on_callback_query(filters
+@app.on_callback_query(filters.regex(r"^GetTimer"))
+@language
+async def get_timer(client, callback_query: CallbackQuery, _
