@@ -25,13 +25,12 @@ async def int_to_alpha(user_id: int) -> str:
 
 def AdminRightsCheck(mystic):
     """
-    Decorator function to check for admin rights.
+    Decorator function to check for admin rights. This function checks if the bot is in maintenance mode, if the message is from a sender chat, if the chat is active, and if the chat is not a non-admin chat. If all checks pass, it checks if the user is a sudo user and if skipmode is enabled. If skipmode is enabled, it calculates the number of votes needed for the action and creates an inline keyboard with a vote button.
     """
     async def wrapper(client, message):
         try:
             # Check if maintenance mode is enabled
             if not await is_maintenance():
-                # If not a sudo user, reply with maintenance message
                 if message.from_user.id not in SUDOERS:
                     return await message.reply_text(
                         text=f"{app.mention} is under maintenance. Visit <a href={SUPPORT_CHAT}>support chat</a> for knowing the reason.",
@@ -72,7 +71,6 @@ def AdminRightsCheck(mystic):
             # Check if the chat is not a non-admin chat
             is_non_admin = await is_nonadmin_chat(message.chat.id)
             if not is_non_admin:
-                # Check if the user is a sudo user
                 if message.from_user.id not in SUDOERS:
                     # Check if skipmode is enabled
                     if await is_skipmode(message.chat.id):
@@ -89,7 +87,6 @@ refresh admin cache via : /reload
                         if command[0] == "c":
                             command = command[1:]
                         if command == "speed":
-                            # If the command is "speed", return an error message
                             return await message.reply_text(_["admin_14"])
                         MODE = command.title()
                         # Create an inline keyboard with a vote button
@@ -103,4 +100,19 @@ refresh admin cache via : /reload
                                 ]
                             ]
                         )
-                        # Store the video and file information in the confir
+                        # Store the video and file information in the confirmer dictionary
+                        confirmer[message.chat.id] = {
+                            "video": message.video,
+                            "file": message.document,
+                            "text": text,
+                            "mode": MODE,
+                        }
+                        return await message.reply_text(
+                            text=text,
+                            reply_markup=upl,
+                            disable_web_page_preview=True,
+                        )
+
+        except Exception as e:
+            LOGGER.error(e)
+            return
