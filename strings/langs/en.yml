@@ -1,44 +1,75 @@
+# This class, BotMessages, contains various message templates used by the bot
+# in different situations. The messages are categorized based on their functionality
+# and can be accessed using their corresponding attribute name.
 class BotMessages:
+
+    # The name attribute is a string that represents the name of the bot.
     name = "🇺🇸 English"
 
+    # The general_1 attribute is a string that is used to instruct the user to reply
+    # to a user's message or give a username/user ID.
     general_1 = "» REPLY TO A USER'S MESSAGE OR GIVE A USERNAME/USER ID."
+
+    # The general_2 attribute is a string that is used to inform the user that something
+    # went wrong while processing their query. It includes a placeholder {0} for the
+    # exception message.
     general_2 = "» SOMETHING WENT WRONG WHILE PROCESSING YOUR QUERY.\n\nEXCEPTION: <code>{0}</code>"
+
+    # The general_3 attribute is a string that informs the user that they need to revert
+    # back to their user account to use the bot, as they are currently an anonymous
+    # admin in the chat.
     general_3 = "YOU'RE AN ANONYMOUS ADMIN IN THIS CHAT, REVERT BACK TO USER ACCOUNT FOR USING ME."
+
+    # The general_4 attribute is a string that informs the user that they don't have
+    # permissions to manage video chats and suggests them to reload the admin cache
+    # via /reload.
     general_4 = "» YOU DON'T HAVE PERMISSIONS TO MANAGE VIDEO CHATS.\n\nRELOAD ADMIN CACHE VIA /reload"
+
+    # The general_5 attribute is a string that informs the user that the bot isn't
+    # streaming on video chat.
     general_5 = "» BOT ISN'T STREAMING ON VIDEO CHAT."
 
+    # The tg_1 attribute is a string that is used to display the download progress
+    # of a file from Telegram. It includes placeholders for file size, completed,
+    # percentage, speed, and ETA.
     tg_1 = "<u><b>{0} DOWNLOADER</b></u>\n\n<b>FILE SIZE :</b> {1}\n<b>COMPLETED :</b> {2}\n<b>PERCENTAGE :</b> {3}%\n\n<b>SPEED :</b> {4}/s\n<b>ETA :</b> {5}"
+
+    # The tg_2 attribute is a string that is used to inform the user that the file
+    # download is successful and is being processed. It includes a placeholder for
+    # the time taken.
     tg_2 = "SUCCESSFULLY DOWNLOADED, PROCESSING FILE...\n\n<b>TIME TAKEN :</b> {0}"
+
+    # The tg_3 attribute is a string that informs the user that the file download
+    # from Telegram has failed and suggests them to try again.
     tg_3 = "FAILED TO DOWNLOAD MEDIA FROM TELEGRAM, PLEASE TRY AGAIN..."
+
+    # The tg_4 attribute is a string that informs the user that the download is
+    # already completed.
     tg_4 = "» DOWNLOAD ALREADY COMPLETED."
+
+    # The tg_5 attribute is a string that informs the user that the download is
+    # already completed or cancelled.
     tg_5 = "» DOWNLOAD ALREADY COMPLETED OR CANCELLED."
+
+    # The tg_6 attribute is a string that informs the user that the download is
+    # cancelled.
     tg_6 = "» DOWNLOAD CANCELLED."
+
+    # The tg_7 attribute is a string that informs the user that the download is
+    # cancelled by a specific user. It includes a placeholder for the username.
     tg_7 = "» DOWNLOAD CANCELLED BY : {0}"
+
+    # The tg_8 attribute is a string that informs the user that the download
+    # couldn't be stopped.
     tg_8 = "FAILED TO STOP THE DOWNLOAD."
+
+    # The tg_9 attribute is a string that informs the user that the ongoing download
+    # task couldn't be fetched.
     tg_9 = "FAILED TO GET THE ONGOING DOWNLOAD TASK..."
 
+    # The call_1 attribute is a string that informs the user that the bot requires
+    # the 'invite users via link' permission to invite the assistant to their chat.
     call_1 = "» BOT REQUIRES <b>INVITE USERS VIA LINK</b> PERMISSION TO INVITE ASSISTANT TO YOUR CHAT."
-    call_2 = "<u><b>{0} ASSISTANT IS BANNED IN YOUR GROUP/CHANNEL.</b></u>\n\n<b>ID :</b> <code>{1}</code>\n<b>NAME :</b> {2}\n<b>USERNAME :</b> @{3}\n\nPLEASE UNBAN THE ASSISTANT AND TRY AGAIN."
-    call_3 = "FAILED TO INVITE {0} ASSISTANT TO YOUR CHAT.\n\nREASON : <code>{1}</code>"
-    call_4 = "PLEASE WAIT...\n\nINVITING {0} ASSISTANT TO YOUR CHAT..."
-    call_5 = "{0} ASSISTANT JOINED SUCCESSFULLY.\n\nTRYING TO START STREAM..."
-    call_6 = "» FAILED TO SWITCH STREAM, PLEASE USE /skip TO CHANGE THE TRACK AGAIN."
-    call_7 = "» DOWNLOADING NEXT TRACK FROM QUEUE.\n\nPLEASE HOLD ON..."
-    call_8 = "<b>NO ACTIVE VIDEO CHAT FOUND.</b>\n\nPLEASE START VIDEO CHAT IN YOUR GROUP/CHANNEL AND TRY AGAIN."
-    call_9 = "<b>ASSISTANT ALREADY IN VIDEO CHAT.</b>\n\nIF ASSISTANT IS NOT IN VIDEO CHAT, PLEASE SEND <code>/reboot</code> AND PLAY AGAIN."
-    call_10 = "<b>TELEGRAM SERVER ERROR</b>\n\nTELEGRAM IS HAVING SOME INTERNAL PROBLEMS, PLEASE TRY PLAYING AGAIN OR RESTART THE VIDEO CHAT OF YOUR GROUP."
 
-    auth_1 = "» YOU CAN ONLY HAVE 25 AUTHORIZED USERS IN YOUR GROUP."
-    auth_2 = "» ADDED {0} TO AUTHORIZED USERS LIST."
-    auth_3 = "{0} IS ALREADY IN AUTHORIZED USERS LIST."
-    auth_4 = "» REMOVED {0} FROM AUTHORIZED USERS LIST."
-    auth_5 = "{0} IS NOT IN AUTHORIZED USERS LIST."
-    auth_6 = "» FETCHING AUTHORIZED USERS LIST..."
-    auth_7 = "» LIST OF AUTHORIZED USERS IN {0} :\n\n"
-    auth_8 = "<b>↬ ADDED BY :</b>"
+    # The call_2 attribute is a string that informs the user that the assistant is
 
-    reload_1 = "» YOU CAN ONLY REFRESH ADMIN CACHE ONCE IN 3 MINUTES.\n\nPLEASE TRY AFTER {0}."
-    reload_2 = "» ADMIN CACHE REFRESHED SUCCESSFULLY."
-    reload_3 = "» FAILED TO RELOAD ADMIN CACHE, MAKE SURE THE BOT IS AN ADMIN IN YOUR CHAT."
-    reload_4 = "» PLEASE WAIT...\n\nREBOOTING {0} FOR YOUR CHAT."
-    reload_5 = "SUCCESSFULLY REBOOTED {0} FOR YOUR CHAT.\n\ns
