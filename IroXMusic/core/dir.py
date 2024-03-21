@@ -1,3 +1,5 @@
+import os
+
 def list_files(directory):
     """
     This function lists all files in a given directory.
@@ -5,7 +7,7 @@ def list_files(directory):
     :param directory: The directory for which files need to be listed
     :return: A list of file names in the specified directory
     """
-    return os.listdir(directory)
+    return [f for f in os.listdir(directory) if os.path.isfile(os.path.join(directory, f))]
 
 
 def file_exists(file_path):
@@ -20,13 +22,4 @@ def file_exists(file_path):
 
 def directory_exists(directory_path):
     """
-    This function checks if a directory exists at the given directory path.
-
-    :param directory_path: The directory path to check for directory existence
-    :return: True if the directory exists, False otherwise
-    """
-    return os.path.isdir(directory_path)
-
-
-def make_directory(directory_path):
 
