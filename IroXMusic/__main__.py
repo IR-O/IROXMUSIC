@@ -1,17 +1,29 @@
 import asyncio
 import importlib
+import sys
+import os
 
+import aioschedule as schedule
 from pyrogram import idle
 from pytgcalls.exceptions import NoActiveGroupCall
 
 import config
-from IroXMusic import LOGGER, app, userbot
+from IroXMusic import LOGGER, app, userbot, client
 from IroXMusic.core.call import Irop
 from IroXMusic.misc import sudo
 from IroXMusic.plugins import ALL_MODULES
 from IroXMusic.utils.database import get_banned_users, get_gbanned
 from config import BANNED_USERS
 
+async def import_modules():
+    LOADING_MODULES = []
+    for module in ALL_MODULES:
+        try:
+            importlib.import_module(f"IroXMusic.plugins{module}")
+            LOADING_MODULES.append(f"{module} - Successfully Imported")
+        except Exception as e:
+            LOADING_MODULES.append(f"{module} - Failed to Import: {e}")
+    return "\n".join(LOADING_MODULES)
 
 async def init():
     if (
@@ -31,32 +43,31 @@ async def init():
         users = await get_banned_users()
         for user_id in users:
             BANNED_USERS.add(user_id)
-    except:
-        pass
+    except Exception as e:
+        LOGGER(__name__).error(f"Error while getting banned users: {e}")
     await app.start()
-    for all_module in ALL_MODULES:
-        importlib.import_module("IroXMusic.plugins" + all_module)
-    LOGGER("IroXMusic.plugins").info("Successfully Imported Modules...")
     await userbot.start()
     await Irop.start()
     try:
         await Irop.stream_call("https://te.legra.ph/file/ab9f1bb095596c10b7ff8.mp4")
     except NoActiveGroupCall:
         LOGGER("IroXMusic").error(
-            "Please turn on the videochat of your log group\channel.\n\nStopping Bot..."
+            "Please turn on the videochat of your log group/channel.\n\nStopping Bot..."
         )
         exit()
-    except:
-        pass
-    await Irop.decorators()
-    LOGGER("IroXMusic").info(
-        "\x49\x72\x6F\x58\x20\x4d\x75\x73\x69\x63\x20\x42\x6f\x74\x20\x53\x74\x61\x72\x74\x65\x64\x20\x53\x75\x63\x63\x65\x73\x73\x66\x75\x6c\x6c\x79\x2e\n\n\x44\x6f\x6e'\x74\x20\x66\x6f\x72\x67\x65\x74\x20\x74\x6f\x20\x76\x69\x73\x69\x74\x20\x40\x69\x72\x6F\x5F\x78\5F\x73\x75\x70\x70\x6F\x72\x74"
-    )
+    except Exception as e:
+        LOGGER("IroXMusic").error(f"Error while streaming call: {e}")
+    await import_modules()
+    LOGGER("IroXMusic.plugins").info("Successfully Imported Modules...")
+    schedule.every(10).seconds.do(Irop.decorators)
+    LOGGER("IroXMusic").info("Running Irop.decorators every 10 seconds...")
     await idle()
     await app.stop()
     await userbot.stop()
     LOGGER("IroXMusic").info("Stopping IroX Music Bot...")
 
-
 if __name__ == "__main__":
-    asyncio.get_event_loop().run_until_complete(init())
+    try:
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(init())
+    except
