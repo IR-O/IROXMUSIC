@@ -11,6 +11,12 @@ from IroXMusic.utils import AdminRightsCheck
 from IroXMusic.utils.inline import close_markup
 from config import BANNED_USERS
 
+def seconds_to_min(seconds: int) -> str:
+    """Convert seconds to minutes and seconds format."""
+    minutes = seconds // 60
+    seconds = seconds % 60
+    return f"{minutes}:{seconds:02d}"
+
 @app.on_message(
     filters.command(["seek", "cseek", "seekback", "cseekback"])
     & filters.group
@@ -26,7 +32,7 @@ async def seek_command(cli, message: Message, _: Any, chat_id: int) -> None:
     :param _: A placeholder for any extra arguments.
     :param chat_id: The ID of the chat.
     """
-    seek_func: Optional[Callable[[int], None]] = None  # Function to perform seek or cseek
+    seek_func: Optional[Callable[[int, int], None]] = None  # Function to perform seek or cseek
 
     # Check if the user provided a valid query
     if len(message.command) == 1:
@@ -35,6 +41,8 @@ async def seek_command(cli, message: Message, _: Any, chat_id: int) -> None:
     query = message.text.split(None, 1)[1].strip()
     if not query.isnumeric():
         return await message.reply_text(_["admin_21"])
+
+    query = int(query)
 
     # Get the playing song information
     playing = db.get(chat_id)
@@ -54,6 +62,7 @@ async def seek_command(cli, message: Message, _: Any, chat_id: int) -> None:
     is_seek_back = message.command[0][-2] == "c"
 
     # Calculate the new position to seek to
+    duration_to_skip = query
     if is_seek_back:
         if (duration_played - duration_to_skip) <= 10:
             return await message.reply_text(
