@@ -15,34 +15,33 @@ from config import BANNED_USERS, adminlist, lyrical
 
 rel = {}
 
-
 @app.on_message(
     filters.command(["admincache", "reload", "refresh"]) & filters.group & ~BANNED_USERS
 )
 @language
 async def reload_admin_cache(client, message: Message, _):
     try:
-        if message.chat.id not in rel:
-            rel[message.chat.id] = {}
-        else:
-            saved = rel[message.chat.id]
-            if saved > time.time():
-                left = get_readable_time((int(saved) - int(time.time())))
-                return await message.reply_text(_["reload_1"].format(left))
+        if message.chat.id in rel and rel[message.chat.id] > time.time():
+            left = get_readable_time(rel[message.chat.id] - time.time())
+            return await message.reply_text(_["reload_1"].format(left))
+
         adminlist[message.chat.id] = []
-        async for user in app.get_chat_members(
+        async for user in app.iter_chat_members(
             message.chat.id, filter=ChatMembersFilter.ADMINISTRATORS
         ):
             if user.privileges.can_manage_video_chats:
                 adminlist[message.chat.id].append(user.user.id)
+
         authusers = await get_authuser_names(message.chat.id)
         for user in authusers:
             user_id = await alpha_to_int(user)
             adminlist[message.chat.id].append(user_id)
+
         now = int(time.time()) + 180
         rel[message.chat.id] = now
         await message.reply_text(_["reload_2"])
-    except:
+    except Exception as e:
+        print(e)
         await message.reply_text(_["reload_3"])
 
 
@@ -50,20 +49,18 @@ async def reload_admin_cache(client, message: Message, _):
 @AdminActual
 async def restartbot(client, message: Message, _):
     mystic = await message.reply_text(_["reload_4"].format(app.mention))
-    await asyncio.sleep(1)
     try:
         db[message.chat.id] = []
         await Irop.stop_stream_force(message.chat.id)
     except:
         pass
+
     userbot = await get_assistant(message.chat.id)
     try:
-        if message.chat.username:
-            await userbot.resolve_peer(message.chat.username)
-        else:
-            await userbot.resolve_peer(message.chat.id)
+        await userbot.resolve_peer(message.chat.id)
     except:
         pass
+
     chat_id = await get_cmode(message.chat.id)
     if chat_id:
         try:
@@ -72,10 +69,7 @@ async def restartbot(client, message: Message, _):
             pass
         userbot = await get_assistant(chat_id)
         try:
-            if got.username:
-                await userbot.resolve_peer(got.username)
-            else:
-                await userbot.resolve_peer(chat_id)
+            await userbot.resolve_peer(chat_id)
         except:
             pass
         try:
@@ -83,6 +77,7 @@ async def restartbot(client, message: Message, _):
             await Irop.stop_stream_force(chat_id)
         except:
             pass
+
     return await mystic.edit_text(_["reload_5"].format(app.mention))
 
 
