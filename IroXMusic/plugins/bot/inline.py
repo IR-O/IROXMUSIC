@@ -6,6 +6,7 @@ from pyrogram.types import (    # Importing necessary modules from pyrogram libr
 from youtubesearchpython.__future__ import VideosSearch  # Importing VideosSearch from youtubesearchpython package
 
 # Importing app instance from IroXMusic package
+import asyncio
 from IroXMusic import app
 
 # Importing answer function from inlinequery.py
@@ -20,16 +21,16 @@ async def inline_query_handler(client, query):  # Defining the inline query hand
     text = query.query.strip().lower()  # Stripping and converting query text to lowercase
     answers = []  # Initializing an empty list to store the answers
 
-    # If the query is empty
-    if text.strip() == "":
+    # If the query is empty or too short
+    if len(text.strip()) == 0:
         try:
             # Answer the inline query with the cached answer
             await client.answer_inline_query(query.id, results=answer, cache_time=10)
         except:
             return  # If any exception occurs, return from the function
     else:
-        # Search for videos using VideosSearch with the query text and limit of 20
-        a = VideosSearch(text, limit=20)
+        # Search for videos using VideosSearch with the query text and limit of 50
+        a = VideosSearch(text, limit=50)
         result = (await a.next()).get("result")  # Get the search result
 
         # Loop through the first 15 results
@@ -83,4 +84,9 @@ async def inline_query_handler(client, query):  # Defining the inline query hand
             )
 
         # Answer the inline query with the answers list
-        await client.answer_inline_query(query.id, results=answers, cache_time=10)
+        for answer in answers:
+            try:
+                await asyncio.sleep(1)  # Adding a delay of 1 second between sending each result
+                await client.answer_inline_query(query.id, results=[answer], cache_time=10)
+            except:
+                return  # If any exception occurs, return from the function
