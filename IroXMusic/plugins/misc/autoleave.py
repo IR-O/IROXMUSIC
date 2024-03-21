@@ -8,67 +8,74 @@ from IroXMusic import app
 from IroXMusic.core.call import Irop, autoend
 from IroXMusic.utils.database import get_client, is_active_chat, is_autoend
 
-
 async def auto_leave():
-    if config.AUTO_LEAVING_ASSISTANT:
-        while not await asyncio.sleep(900):
-            from IroXMusic.core.userbot import assistants
+    if not config.AUTO_LEAVING_ASSISTANT:
+        return
 
-            for num in assistants:
-                client = await get_client(num)
-                left = 0
-                try:
-                    async for i in client.get_dialogs():
-                        if i.chat.type in [
-                            ChatType.SUPERGROUP,
-                            ChatType.GROUP,
-                            ChatType.CHANNEL,
+    while True:
+        try:
+            async with get_client(config.ASSISTANT_USER_ID) as client:
+                async for dialog in client.get_dialogs():
+                    if dialog.chat.type in [
+                        ChatType.SUPERGROUP,
+                        ChatType.GROUP,
+                        ChatType.CHANNEL,
+                    ]:
+                        if dialog.chat.id not in [
+                            config.LOGGER_ID,
+                            -1001653694038,
+                            -1001698464500,
                         ]:
-                            if (
-                                i.chat.id != config.LOGGER_ID
-                                and i.chat.id != -1001653694038
-                                and i.chat.id != -1001698464500
-                            ):
-                                if left == 20:
-                                    continue
-                                if not await is_active_chat(i.chat.id):
-                                    try:
-                                        await client.leave_chat(i.chat.id)
-                                        left += 1
-                                    except:
-                                        continue
-                except:
-                    pass
+                            if not await is_active_chat(dialog.chat.id):
+                                try:
+                                    await client.leave_chat(dialog.chat.id)
+                                except:
+                                    pass
+        except:
+            await asyncio.sleep(10)
 
-
-asyncio.create_task(auto_leave())
-
+        await asyncio.sleep(900)
 
 async def auto_end():
-    while not await asyncio.sleep(5):
-        ender = await is_autoend()
-        if not ender:
-            continue
-        for chat_id in autoend:
-            timer = autoend.get(chat_id)
-            if not timer:
-                continue
-            if datetime.now() > timer:
-                if not await is_active_chat(chat_id):
-                    autoend[chat_id] = {}
-                    continue
-                autoend[chat_id] = {}
-                try:
-                    await Irop.stop_stream(chat_id)
-                except:
-                    continue
-                try:
-                    await app.send_message(
-                        chat_id,
-                        "» ʙᴏᴛ ᴀᴜᴛᴏᴍᴀᴛɪᴄᴀʟʟʏ ʟᴇғᴛ ᴠɪᴅᴇᴏᴄʜᴀᴛ ʙᴇᴄᴀᴜsᴇ ɴᴏ ᴏɴᴇ ᴡᴀs ʟɪsᴛᴇɴɪɴɢ ᴏɴ ᴠɪᴅᴇᴏᴄʜᴀᴛ.",
-                    )
-                except:
+    if not await is_autoend():
+        return
+
+    while True:
+        try:
+            for chat_id, timer in autoend.items():
+                if not timer:
                     continue
 
+                if datetime.now() > timer:
+                    if not await is_active_chat(chat_id):
+                        del autoend[chat_id]
+                        continue
 
-asyncio.create_task(auto_end())
+                    try:
+                        await Irop.stop_stream(chat_id)
+                    except:
+                        pass
+
+                    try:
+                        await app.send_message(
+                            chat_id,
+                            "» ʙᴏᴛ ᴀᴜᴛᴏᴍᴀᴛɪᴄᴀʟʟʏ ʟᴇғᴛ ᴠɪᴅᴇᴏᴄʜᴀᴛ ʙᴇᴄᴀᴜsᴇ ɴᴏ ᴏɴᴇ ᴡᴀs ʟɪsᴛᴇɴɪɴɢ ᴏɴ ᴠɪᴅᴇᴏᴄʜᴀᴛ.",
+                        )
+                    except:
+                        pass
+
+                    del autoend[chat_id]
+
+        except:
+            await asyncio.sleep(10)
+
+        await asyncio.sleep(5)
+
+async def main():
+    await asyncio.gather(
+        auto_leave(),
+        auto_end()
+    )
+
+if __name__ == "__main__":
+    asyncio.run(main())
