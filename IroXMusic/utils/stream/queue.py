@@ -1,12 +1,12 @@
 import asyncio
 from typing import Union
 
-from IroXMusic.misc import db
-from IroXMusic.utils.formatters import check_duration, seconds_to_min
-from config import autoclean, time_to_seconds
+from IroXMusic.misc import db  # Database module
+from IroXMusic.utils.formatters import check_duration, seconds_to_min  # Helper functions
+from config import autoclean, time_to_seconds  # Configuration settings
 
 async def get_chat_queue(chat_id):
-    """Get the queue for a given chat id."""
+    """Get the queue for a given chat id from the database."""
     return db.get(chat_id, [])
 
 async def add_to_queue(
@@ -21,13 +21,18 @@ async def add_to_queue(
     stream: str,
     forceplay: Union[bool, str] = None,
 ):
-    """Add a song to the queue."""
-    title = title.title()
+    """Add a song to the queue after processing the input data.
+
+    This function converts the duration to seconds, handles invalid durations,
+    and inserts the song into the queue based on the forceplay parameter.
+    """
+    title = title.title()  # Capitalize the first letter of the title
+
     try:
-        duration_in_seconds = time_to_seconds(duration) - 3
+        duration_in_seconds = time_to_seconds(duration) - 3  # Convert duration to seconds
     except ValueError:
-        duration_in_seconds = 0
-        duration = "Invalid duration"
+        duration_in_seconds = 0  # If the duration is invalid, set the duration to 0 seconds
+        duration = "Invalid duration"  # Set the duration string to 'Invalid duration'
 
     put = {
         "title": title,
@@ -44,13 +49,13 @@ async def add_to_queue(
 
     if forceplay:
         queue = await get_chat_queue(chat_id)
-        queue.insert(0, put)
+        queue.insert(0, put)  # Insert the song at the beginning of the queue if forceplay is True
     else:
         queue = await get_chat_queue(chat_id)
-        queue.append(put)
+        queue.append(put)  # Otherwise, append the song to the end of the queue
 
-    db[chat_id] = queue
-    autoclean.append(file)
+    db[chat_id] = queue  # Save the updated queue in the database
+    autoclean.append(file)  # Add the file to the autoclean list
 
 async def add_to_queue_index(
     chat_id: int,
@@ -63,27 +68,11 @@ async def add_to_queue_index(
     stream: str,
     forceplay: Union[bool, str] = None,
 ):
-    """Add a song to the queue with index checking."""
-    if "20.212.146.162" in vidid:
+    """Add a song to the queue with index checking after processing the input data."""
+    if "20.212.146.162" in vidid:  # If the vidid contains a specific IP address
         try:
-            dur = await check_duration(vidid)
-            duration = seconds_to_min(dur)
+            dur = await check_duration(vidid)  # Get the duration using the check_duration function
+            duration = seconds_to_min(dur)  # Convert the duration to a human-readable format
         except Exception:
-            duration = "ᴜʀʟ sᴛʀᴇᴀᴍ"
-            dur = 0
-    else:
-        dur = 0
-
-    put = {
-        "title": title,
-        "dur": duration,
-        "streamtype": stream,
-        "by": user,
-        "chat_id": original_chat_id,
-        "file": file,
-        "vidid": vidid,
-        "seconds": dur,
-        "played": 0,
-    }
-
-    if force
+            duration = "ᴜʀʟ sᴛʀᴇᴀᴍ"  # If there's an error, set the duration to 'URL stream'
+            dur
