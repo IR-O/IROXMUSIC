@@ -1,13 +1,15 @@
-from pyrogram import Client, errors
-from pyrogram.enums import ChatMemberStatus, ParseMode
+from pyrogram import Client, errors  # Importing necessary modules
+from pyrogram.enums import ChatMemberStatus, ParseMode  # Importing necessary enums
 
-import config
+import config  # Importing config module
 
-from ..logging import LOGGER
+from ..logging import LOGGER  # Importing custom logging module
 
 class Irop(Client):
     def __init__(self):
-        LOGGER(__name__).info(f"Starting Bot...")
+        LOGGER(__name__).info(f"Starting Bot...")  # Logging that the bot is starting
+
+        # Checking if the required configurations are set
         if not config.BOT_TOKEN:
             LOGGER(__name__).error("Bot token is empty.")
             exit()
@@ -17,22 +19,26 @@ class Irop(Client):
         if not config.API_ID or not config.API_HASH:
             LOGGER(__name__).error("API ID or hash is empty.")
             exit()
+
+        # Initializing the Client with required configurations
         super().__init__(
-            name="IroXMusic",
-            api_id=config.API_ID,
-            api_hash=config.API_HASH,
-            bot_token=config.BOT_TOKEN,
-            in_memory=True,
-            parse_mode=ParseMode.HTML,
-            max_concurrent_transmissions=7,
+            name="IroXMusic",  # Friendly name for the Client
+            api_id=config.API_ID,  # Telegram API ID
+            api_hash=config.API_HASH,  # Telegram API Hash
+            bot_token=config.BOT_TOKEN,  # Bot token
+            in_memory=True,  # Running the Client in-memory
+            parse_mode=ParseMode.HTML,  # Setting parse mode to HTML
+            max_concurrent_transmissions=7,  # Maximum number of simultaneous transmissions
         )
 
     async def start(self):
         try:
-            await super().start()
+            await super().start()  # Starting the Client
         except Exception as e:
-            LOGGER(__name__).error(f"Failed to start bot: {e}")
+            LOGGER(__name__).error(f"Failed to start bot: {e}")  # Logging the error if starting the Client fails
             exit()
+
+        # Getting the bot's details
         self.id = self.me.id
         self.name = self.me.first_name + " " + (self.me.last_name or "")
         try:
@@ -41,6 +47,7 @@ class Irop(Client):
             self.username = None
         self.mention = self.me.mention
 
+        # Sending a message to the log channel
         try:
             await self.send_message(
                 chat_id=config.LOGGER_ID,
@@ -49,5 +56,4 @@ class Irop(Client):
         except (errors.ChannelInvalid, errors.PeerIdInvalid):
             LOGGER(__name__).error(
                 "Bot has failed to access the log group/channel. Make sure that you have added your bot to your log group/channel."
-            )
-
+            )  # Logging the error if the bot fails to access the log channel
