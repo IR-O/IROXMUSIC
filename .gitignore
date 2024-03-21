@@ -1,8 +1,4 @@
 # Ignore common cache and session files
 .env
-.cache
-log.txt
-*.session
-.DS_Store
-*.session-journal
+.cache/
 
