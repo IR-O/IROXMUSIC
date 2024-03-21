@@ -4,17 +4,17 @@ from dotenv import load_dotenv
 from ..logging import LOGGER
 import config
 
+# Load environment variables from .env file
 load_dotenv()
 
+# Retrieve environment variables
 BOT_TOKEN = getenv("BOT_TOKEN", "")
 MONGO_DB_URI = getenv("MONGO_DB_URI", "")
 STRING_SESSIONS = [getenv(f"STRING_SESSION{i}") for i in range(1, 6)]
 TEST_ID = int("-10021311999991689")
 LOGGER_ID = getenv("LOGGER_ID", "")
 
-assistants = []
-assistantids = [assistant.id for assistant in create_assistants()]
-
+# Function to create assistant instances
 def create_assistants():
     assistants = []
     for i in range(1, 6):
@@ -29,12 +29,14 @@ def create_assistants():
             assistants.append(assistant)
     return assistants
 
+# Function to join a chat or log an error if joining fails
 def join_chat_or_log(client, chat_id):
     try:
         client.join_chat(chat_id)
     except Exception as e:
         LOGGER(__name__).error(f"Failed to join chat {chat_id}: {e}")
 
+# Async function to start an assistant
 async def start_assistant(assistant):
     try:
         await assistant.start()
@@ -45,10 +47,12 @@ async def start_assistant(assistant):
     except Exception as e:
         LOGGER(__name__).error(f"Failed to start assistant {assistant.name}: {e}")
 
+# Async function to start all assistants
 async def start():
     LOGGER(__name__).info(f"Starting Assistants...")
     await asyncio.gather(*[start_assistant(assistant) for assistant in create_assistants()])
 
+# Async function to stop all assistants
 async def stop():
     LOGGER(__name__).info(f"Stopping Assistants...")
     for assistant in create_assistants():
