@@ -1,1 +1,28 @@
-python3 -m IroXMusic
+pip install pygame
+
+
+import pygame
+import sys
+from pygame.locals import *
+
+def play_music(music_file):
+    pygame.mixer.init()
+    pygame.mixer.music.load(music_file)
+    pygame.mixer.music.play()
+
+def main():
+    if len(sys.argv) < 2:
+        print("Usage: python music_player.py <music_file>")
+        sys.exit(1)
+
+    music_file = sys.argv[1]
+    play_music(music_file)
+
+    while pygame.mixer.music.get_busy():
+        pygame.time.Clock().tick(10)
+
+if __name__ == "__main__":
+    main()
+
+
+python music_player.py <path_to_your_music_file>
