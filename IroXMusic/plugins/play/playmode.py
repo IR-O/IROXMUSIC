@@ -21,9 +21,12 @@ async def playmode_(client, message: Message, _):
         playmode = await get_playmode(message.chat.id)
         playty = await get_playtype(message.chat.id)
 
+        if playmode not in ["Direct", "Group"] or playty not in ["Everyone", "Admin"]:
+            raise Exception("Invalid playmode or playtype found in the database.")
+
         direct = playmode == "Direct" if is_non_admin else None
         group = not is_non_admin if playmode == "Group" else None
-        playtype = playty == "Everyone" if group else playty
+        playtype = playty if group else "Admin" if is_non_admin else None
 
     except Exception as e:
         await message.reply_text(_["error_1"].format(str(e)))
@@ -31,3 +34,6 @@ async def playmode_(client, message: Message, _):
 
     # Do something with direct, group, and playtype
     # ...
+
+    keyboard = playmode_users_markup(direct, group, playtype)
+    await message.reply_text(_["playmode_1"], reply_markup=keyboard)
