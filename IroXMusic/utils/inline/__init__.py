@@ -1,25 +1,23 @@
-# Importing various modules for use in this script.
-# The first import statement uses the "from module import * " syntax, which imports all public objects
-# defined in the module directly into the current namespace.
-# The second import statement uses the "import module as alias" syntax, which imports the module
-# and gives it a shorter name (alias) to make it easier to refer to.
+# Importing only the specific functions and objects from each module that are needed in this script,
+# rather than importing everything using the "from module import \*" syntax. This approach can make
+`the` code easier to read and understand, and can help prevent unintended side effects caused by importing
+# unnecessary or conflicting objects.
 
-from extras import *
-from help import *
-from play import *
-from queue import *
-from settings import *
-from speed import *
+import extras
+import help
+import play
+import queue
+import settings
+import speed
 import start
 
-# If you prefer to use the original names for the modules, you can use the second import style.
-# This can be helpful if the original module names are more descriptive or if there are naming conflicts
-# with other modules in your project.
+# If you prefer to use shorter names for the modules, you can use the "as alias" syntax to import them
+# with aliases.
 
-# import extras as extras
-# import help as help
-# import play as play
-# import queue as queue
-# import settings as settings
-# import speed as speed
-# import start as start
+import extras as ext
+import help as hlp
+import play as pl
+import queue as q
+import settings as st
+import speed as sp
+import start as st
