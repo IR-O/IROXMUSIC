@@ -3,14 +3,13 @@ from pyrogram.types import Message
 
 from IroXMusic import app
 from IroXMusic.misc import SUDOERS, LOVE
-from IroXMusic.utils.database import autoend_off, autoend_on
-
+from IroXMusic.utils.database import autoend_on, autoend_off
 
 @app.on_message(filters.command("autoend") & SUDOERS & LOVE)
 async def auto_end_stream(_, message: Message):
-    usage = "<b>ᴇxᴀᴍᴘʟᴇ :</b>\n\n/autoend [ᴇɴᴀʙʟᴇ | ᴅɪsᴀʙʟᴇ]"
+    USAGE = "ᴇxᴀᴍᴘʟᴇ :\n/autoend [ᴇɴᴀʙʟᴇ | ᴅɪsᴀʙʟᴇ]"
     if len(message.command) != 2:
-        return await message.reply_text(usage)
+        return await message.reply_text(USAGE)
     state = message.text.split(None, 1)[1].strip().lower()
     if state == "enable":
         await autoend_on()
@@ -21,4 +20,4 @@ async def auto_end_stream(_, message: Message):
         await autoend_off()
         await message.reply_text("» ᴀᴜᴛᴏ ᴇɴᴅ sᴛʀᴇᴀᴍ ᴅɪsᴀʙʟᴇᴅ.")
     else:
-        await message.reply_text(usage)
+        await message.reply_text(USAGE)
