@@ -39,8 +39,7 @@ yes_no_prompt() {
 # This function updates the package list and upgrades the packages if an update is available
 update_package_list() {
   print_with_color "nocolor" "\nUpdating package list..."
-  sudo apt update 2>&1 | grep -q "can be upgraded"
-  if [ $? -eq 0 ]; then
+  if sudo apt update | grep -q "can be upgraded"; then
     print_with_color "cgreen" "UPDATE AVAILABLE"
     print_with_color "nocolor" "\nDo you want to automatically upgrade (y/n)?"
     if yes_no_prompt; then
@@ -77,7 +76,7 @@ install_package() {
 # This function checks the version of ffmpeg and prints a message if the version is lower than 4.0
 check_ffmpeg_version() {
   local ffmpeg_version=$(ffmpeg -version | grep -Po 'version \K[0-9.]*')
-  if (( $(echo "$ffmpeg_version < 4.0" | bc -l) )); then
+  if (( $(echo "${ffmpeg_version} < 4.0" | bc -l) )); then
     print_with_color "cblue" "Playing live streams not going to work since you have ffmpeg ${ffmpeg_version}, live streams are supported by version 4+.\n"
   fi
 }
@@ -107,4 +106,16 @@ upgrade_pip_and_install_dependencies() {
 # This is the main function that runs the entire script
 main() {
   if ! has_sudo_privileges; then
-    print_with_color "
+    print_with_color "cred" "Error: This script needs sudo privileges to run."
+    exit 1
+  fi
+
+  update_package_list
+  install_package "ffmpeg"
+  check_ffmpeg_version
+  install_nodejs_and_npm
+  upgrade_pip_and_install_dependencies
+}
+
+# Call the main function
+main
