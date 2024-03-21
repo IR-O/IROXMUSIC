@@ -1,4 +1,4 @@
-from pyrogram import Client, errors  # Importing necessary modules
+from pyrogram import Client, errors, types  # Importing necessary modules
 from pyrogram.enums import ChatMemberStatus, ParseMode  # Importing necessary enums
 
 import config  # Importing config module
@@ -34,26 +34,24 @@ class Irop(Client):
     async def start(self):
         try:
             await super().start()  # Starting the Client
+            self.id = self.me.id
+            self.name = self.me.first_name + " " + (self.me.last_name or "")
+            self.username = self.me.username
+            self.mention = self.me.mention
+
+            # Sending a message to the log channel
+            try:
+                await self.send_message(
+                    chat_id=config.LOGGER_ID,
+                    text=f"<u><b>» {self.mention} ʙᴏᴛ sᴛᴀʀᴛᴇᴅ :</b><u>\n\nɪᴅ : <code>{self.id}</code>\nɴᴀᴍᴇ : {self.name}\nᴜsᴇʀɴᴀᴍᴇ : @{self.username}",
+                )
+            except (errors.ChannelInvalid, errors.PeerIdInvalid):
+                LOGGER(__name__).error(
+                    "Bot has failed to access the log group/channel. Make sure that you have added your bot to your log group/channel."
+                )  # Logging the error if the bot fails to access the log channel
+
         except Exception as e:
             LOGGER(__name__).error(f"Failed to start bot: {e}")  # Logging the error if starting the Client fails
-            exit()
-
-        # Getting the bot's details
-        self.id = self.me.id
-        self.name = self.me.first_name + " " + (self.me.last_name or "")
-        try:
-            self.username = self.me.username
-        except Exception:
-            self.username = None
-        self.mention = self.me.mention
-
-        # Sending a message to the log channel
-        try:
-            await self.send_message(
-                chat_id=config.LOGGER_ID,
-                text=f"<u><b>» {self.mention} ʙᴏᴛ sᴛᴀʀᴛᴇᴅ :</b><u>\n\nɪᴅ : <code>{self.id}</code>\nɴᴀᴍᴇ : {self.name}\nᴜsᴇʀɴᴀᴍᴇ : @{self.username}",
-            )
-        except (errors.ChannelInvalid, errors.PeerIdInvalid):
-            LOGGER(__name__).error(
-                "Bot has failed to access the log group/channel. Make sure that you have added your bot to your log group/channel."
-            )  # Logging the error if the bot fails to access the log channel
+        finally:
+            if self.username is not None:
+                LOGGER(__name__).info(f"Bot username: @{self.username}")
