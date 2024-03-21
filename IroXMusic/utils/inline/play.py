@@ -1,11 +1,12 @@
 import math
-
 from pyrogram.types import InlineKeyboardButton
 
 from IroXMusic.utils.formatters import time_to_seconds
 
-
-def track_markup(_, videoid, user_id, channel, fplay):
+def track_markup(*, videoid, user_id, channel, fplay):
+    """
+    Generate InlineKeyboardMarkup for track
+    """
     buttons = [
         [
             InlineKeyboardButton(
@@ -27,11 +28,20 @@ def track_markup(_, videoid, user_id, channel, fplay):
     return buttons
 
 
-def stream_markup_timer(_, chat_id, played, dur):
+def stream_markup_timer(*, chat_id, played, dur):
+    """
+    Generate InlineKeyboardMarkup for stream timer
+    """
     played_sec = time_to_seconds(played)
     duration_sec = time_to_seconds(dur)
+
+    if duration_sec == 0:
+        return []
+
     percentage = (played_sec / duration_sec) * 100
     umm = math.floor(percentage)
+
+    bar = ""
     if 0 < umm <= 10:
         bar = "◉—————————"
     elif 10 < umm < 20:
@@ -52,6 +62,7 @@ def stream_markup_timer(_, chat_id, played, dur):
         bar = "————————◉—"
     else:
         bar = "—————————◉"
+
     buttons = [
         [
             InlineKeyboardButton(text="▷", callback_data=f"ADMIN Resume|{chat_id}"),
@@ -71,7 +82,10 @@ def stream_markup_timer(_, chat_id, played, dur):
     return buttons
 
 
-def stream_markup(_, chat_id):
+def stream_markup(*, chat_id):
+    """
+    Generate InlineKeyboardMarkup for stream
+    """
     buttons = [
         [
             InlineKeyboardButton(text="▷", callback_data=f"ADMIN Resume|{chat_id}"),
@@ -85,7 +99,10 @@ def stream_markup(_, chat_id):
     return buttons
 
 
-def playlist_markup(_, videoid, user_id, ptype, channel, fplay):
+def playlist_markup(*, videoid, user_id, ptype, channel, fplay):
+    """
+    Generate InlineKeyboardMarkup for playlist
+    """
     buttons = [
         [
             InlineKeyboardButton(
@@ -107,7 +124,10 @@ def playlist_markup(_, videoid, user_id, ptype, channel, fplay):
     return buttons
 
 
-def livestream_markup(_, videoid, user_id, mode, channel, fplay):
+def livestream_markup(*, videoid, user_id, mode, channel, fplay):
+    """
+    Generate InlineKeyboardMarkup for live stream
+    """
     buttons = [
         [
             InlineKeyboardButton(
@@ -118,39 +138,3 @@ def livestream_markup(_, videoid, user_id, mode, channel, fplay):
         [
             InlineKeyboardButton(
                 text=_["CLOSE_BUTTON"],
-                callback_data=f"forceclose {videoid}|{user_id}",
-            ),
-        ],
-    ]
-    return buttons
-
-
-def slider_markup(_, videoid, user_id, query, query_type, channel, fplay):
-    query = f"{query[:20]}"
-    buttons = [
-        [
-            InlineKeyboardButton(
-                text=_["P_B_1"],
-                callback_data=f"MusicStream {videoid}|{user_id}|a|{channel}|{fplay}",
-            ),
-            InlineKeyboardButton(
-                text=_["P_B_2"],
-                callback_data=f"MusicStream {videoid}|{user_id}|v|{channel}|{fplay}",
-            ),
-        ],
-        [
-            InlineKeyboardButton(
-                text="◁",
-                callback_data=f"slider B|{query_type}|{query}|{user_id}|{channel}|{fplay}",
-            ),
-            InlineKeyboardButton(
-                text=_["CLOSE_BUTTON"],
-                callback_data=f"forceclose {query}|{user_id}",
-            ),
-            InlineKeyboardButton(
-                text="▷",
-                callback_data=f"slider F|{query_type}|{query}|{user_id}|{channel}|{fplay}",
-            ),
-        ],
-    ]
-    return buttons
