@@ -16,61 +16,51 @@ from IroXMusic.utils.database import (
 async def activevc(_, message: Message):
     mystic = await message.reply_text("» ɢᴇᴛᴛɪɴɢ ᴀᴄᴛɪᴠᴇ ᴠᴏɪᴄᴇ ᴄʜᴀᴛs ʟɪsᴛ...")
     served_chats = await get_active_chats()
-    text = ""
-    j = 0
-    for x in served_chats:
+    if not served_chats:
+        return await mystic.edit_text(f"» ɴᴏ ᴀᴄᴛɪᴠᴇ ᴠᴏɪᴄᴇ ᴄʜᴀᴛs ᴏɴ {app.mention}.")
+
+    text = "» ʟɪsᴛ ᴏғ ᴄᴜʀʀᴇɴᴛʟʏ ᴀᴄᴛɪᴠᴇ ᴠᴏɪᴄᴇ ᴄʜᴀᴛs :\n\n"
+    for j, x in enumerate(served_chats, start=1):
         try:
-            title = (await app.get_chat(x)).title
+            chat = await app.get_chat(x)
+            title = chat.title
         except:
             await remove_active_chat(x)
             continue
         try:
-            if (await app.get_chat(x)).username:
-                user = (await app.get_chat(x)).username
-                text += f"<b>{j + 1}.</b> <a href=https://t.me/{user}>{unidecode(title).upper()}</a> [<code>{x}</code>]\n"
+            if chat.username:
+                user = chat.username
+                text += f"<b>{j}.</b> <a href=https://t.me/{user}>{unidecode(title).upper()}</a> [<code>{x}</code>]\n"
             else:
-                text += (
-                    f"<b>{j + 1}.</b> {unidecode(title).upper()} [<code>{x}</code>]\n"
-                )
-            j += 1
+                text += f"<b>{j}.</b> {unidecode(title).upper()} [<code>{x}</code>]\n"
         except:
             continue
-    if not text:
-        await mystic.edit_text(f"» ɴᴏ ᴀᴄᴛɪᴠᴇ ᴠᴏɪᴄᴇ ᴄʜᴀᴛs ᴏɴ {app.mention}.")
-    else:
-        await mystic.edit_text(
-            f"<b>» ʟɪsᴛ ᴏғ ᴄᴜʀʀᴇɴᴛʟʏ ᴀᴄᴛɪᴠᴇ ᴠᴏɪᴄᴇ ᴄʜᴀᴛs :</b>\n\n{text}",
-            disable_web_page_preview=True,
-        )
+
+    await mystic.edit_text(text, disable_web_page_preview=True)
 
 
 @app.on_message(filters.command(["activev", "activevideo"]) & SUDOERS & LOVE)
-async def activevi_(_, message: Message):
+async def activevi(_, message: Message):
     mystic = await message.reply_text("» ɢᴇᴛᴛɪɴɢ ᴀᴄᴛɪᴠᴇ ᴠɪᴅᴇᴏ ᴄʜᴀᴛs ʟɪsᴛ...")
     served_chats = await get_active_video_chats()
-    text = ""
-    j = 0
-    for x in served_chats:
+    if not served_chats:
+        return await mystic.edit_text(f"» ɴᴏ ᴀᴄᴛɪᴠᴇ ᴠɪᴅᴇᴏ ᴄʜᴀᴛs ᴏɴ {app.mention}.")
+
+    text = "» ʟɪsᴛ ᴏғ ᴄᴜʀʀᴇɴᴛʟʏ ᴀᴄᴛɪᴠᴇ ᴠɪᴅᴇᴏ ᴄʜᴀᴛs :\n\n"
+    for j, x in enumerate(served_chats, start=1):
         try:
-            title = (await app.get_chat(x)).title
+            chat = await app.get_chat(x)
+            title = chat.title
         except:
             await remove_active_video_chat(x)
             continue
         try:
-            if (await app.get_chat(x)).username:
-                user = (await app.get_chat(x)).username
-                text += f"<b>{j + 1}.</b> <a href=https://t.me/{user}>{unidecode(title).upper()}</a> [<code>{x}</code>]\n"
+            if chat.username:
+                user = chat.username
+                text += f"<b>{j}.</b> <a href=https://t.me/{user}>{unidecode(title).upper()}</a> [<code>{x}</code>]\n"
             else:
-                text += (
-                    f"<b>{j + 1}.</b> {unidecode(title).upper()} [<code>{x}</code>]\n"
-                )
-            j += 1
+                text += f"<b>{j}.</b> {unidecode(title).upper()} [<code>{x}</code>]\n"
         except:
             continue
-    if not text:
-        await mystic.edit_text(f"» ɴᴏ ᴀᴄᴛɪᴠᴇ ᴠɪᴅᴇᴏ ᴄʜᴀᴛs ᴏɴ {app.mention}.")
-    else:
-        await mystic.edit_text(
-            f"<b>» ʟɪsᴛ ᴏғ ᴄᴜʀʀᴇɴᴛʟʏ ᴀᴄᴛɪᴠᴇ ᴠɪᴅᴇᴏ ᴄʜᴀᴛs :</b>\n\n{text}",
-            disable_web_page_preview=True,
-        )
+
+    await mystic.edit_text(text, disable_web_page_preview=True)
