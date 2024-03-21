@@ -1,38 +1,27 @@
-# Import the required module for this program
+import argparse
 import pygame
-import sys
-from pygame.locals import *
 
 def play_music(music_file):
-    # Initialize the mixer module of pygame
     pygame.mixer.init()
-    
-    # Load the desired music file
     pygame.mixer.music.load(music_file)
-    
-    # Play the music file
     pygame.mixer.music.play()
-
-def main():
-    # Check if the number of command line arguments is less than 2
-    if len(sys.argv) < 2:
-        # Print the usage instructions and exit the program
-        print("Usage: python music_player.py <music_file>")
-        sys.exit(1)
-
-    # Get the music file path from the command line argument
-    music_file = sys.argv[1]
-    
-    # Call the play_music function with the music file path
-    play_music(music_file)
-
-    # Continue playing the music until it finishes
     while pygame.mixer.music.get_busy():
-        # Wait for 10 milliseconds before checking again
         pygame.time.Clock().tick(10)
 
-if __name__ == "__main__":
-    # Call the main function
-    main()
+def main():
+    parser = argparse.ArgumentParser(description='A simple music player.')
+    parser.add_argument('music_file', help='Path to the music file.')
+    args = parser.parse_args()
 
-# Usage: python music_player.py <path_to_your_music_file>
+    if not pygame.mixer.init():
+        print("Error initializing mixer module.")
+        sys.exit(1)
+
+    try:
+        play_music(args.music_file)
+    except Exception as e:
+        print(f"Error playing music file: {e}")
+        sys.exit(1)
+
+if __name__ == "__main__":
+    main()
