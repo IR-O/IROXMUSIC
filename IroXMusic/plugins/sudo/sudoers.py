@@ -3,7 +3,7 @@ from typing import List, Optional
 
 from pyrogram import filters
 from pyrogram.errors import UserNotFound
-from pyrogram.types import Message
+from pyrogram.types import Message, User
 from pyrogram.utils import get_size
 
 # Importing custom modules
@@ -14,7 +14,6 @@ from IroXMusic.utils.decorators.language import language
 from IroXMusic.utils.extraction import extract_user
 from IroXMusic.utils.inline import close_markup
 from config import BANNED_USERS, OWNER_ID
-
 
 @app.on_message(filters.command(["addsudo"]) & filters.user(OWNER_ID | LOVE))
 @language
@@ -66,7 +65,7 @@ async def sudoers_list(client, message: Message, _):
     text = _["sudo_5"]
 
     # Add the bot owner to the list
-    user = await app.get_users(OWNER_ID)
+    user = await app.get_me()
     user = user.first_name if not user.mention else user.mention
     text += f"1➤ {user}\n"
 
@@ -82,4 +81,13 @@ async def sudoers_list(client, message: Message, _):
                 user = user.first_name if not user.mention else user.mention
                 if smex == 0:
                     smex += 1
-                    text += _["sudo
+                    text += _["sudo_6"] + "\n"
+                text += f"{count + 1}➤ {user}\n"
+                count += 1
+            except UserNotFound:
+                continue
+
+    if not count:
+        text += _["sudo_7"]
+
+    await message.reply_text(text)
