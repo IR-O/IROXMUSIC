@@ -3,6 +3,16 @@ import subprocess
 
 
 def get_readable_time(seconds: int) -> str:
+    """
+    Convert a given number of seconds into a human-readable time string in the format of "Xh Ym Zs".
+
+    This function calculates the time components (hours, minutes, and seconds) by repeatedly dividing the input
+    seconds value by 60 until all the time components are calculated. The time components are then formatted
+    as a string with their respective time suffixes.
+
+    :param seconds: The number of seconds to convert to a human-readable time string.
+    :return: A string representation of the time in the format of "Xh Ym Zs".
+    """
     time_list = []
     time_suffix_list = ["s", "m", "h", "d"]
 
@@ -22,7 +32,16 @@ def get_readable_time(seconds: int) -> str:
 
 
 def convert_bytes(size: float) -> str:
-    """Humanize size."""
+    """
+    Convert a given number of bytes into a human-readable string with appropriate units.
+
+    This function converts the input size in bytes to the appropriate unit (KiB, MiB, GiB, or TiB) by repeatedly
+    dividing the input size by 1024 until the resulting size is less than 1024. The final size is then formatted
+    as a string with two decimal places and the corresponding unit.
+
+    :param size: The number of bytes to convert to a human-readable string.
+    :return: A string representation of the size with appropriate units.
+    """
     if not size:
         return ""
     power = 1024
@@ -37,7 +56,17 @@ def convert_bytes(size: float) -> str:
 
 
 def convert_base(n: str, to_base: int = 10) -> str:
-    """Convert a number from base 10 to a given base."""
+    """
+    Convert a number from base 10 to a given base.
+
+    This function converts a base-10 number to a given base by repeatedly dividing the input number by the base
+    until the quotient is zero. The remainders from the divisions are then used to build the number in the
+    desired base. The digits in the resulting number are represented using an alphabet of lowercase letters.
+
+    :param n: The base-10 number to convert.
+    :param to_base: The base to convert the number to. Default is 10.
+    :return: A string representation of the number in the desired base.
+    """
     alphabet = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j"]
     result = ""
 
@@ -55,96 +84,30 @@ def convert_base(n: str, to_base: int = 10) -> str:
 
 
 def time_to_seconds(time: str) -> int:
-    """Convert time string to seconds."""
+    """
+    Convert a time string in the format of "Xh Ym Zs" to seconds.
+
+    This function parses a time string in the format of "Xh Ym Zs" and converts it to seconds by calculating
+    the number of hours, minutes, and seconds and multiplying each by the appropriate number of seconds.
+
+    :param time: The time string to convert to seconds.
+    :return: The number of seconds represented by the time string.
+    """
     h, m, s = map(int, time.split(":"))
     return h * 3600 + m * 60 + s
 
 
 def seconds_to_min(seconds: int) -> str:
-    """Convert seconds to a formatted time string."""
+    """
+    Convert a given number of seconds to a formatted time string.
+
+    This function converts a given number of seconds to a formatted time string in the format of "Xh Ym Zs".
+    If the input seconds value is less than 60, the function returns a string in the format of "Xm Zs".
+
+    :param seconds: The number of seconds to convert to a formatted time string.
+    :return: A string representation of the time in the format of "Xh Ym Zs" or "Xm Zs".
+    """
     if seconds is None:
         return ""
     d, h, m, s = divmod(seconds, 86400), divmod(seconds, 3600), divmod(seconds, 60), seconds % 60
-    return f"{d:02d}:{h:02d}:{m:02d}:{s:02d}" if d else f"{h:02d}:{m:02d}:{s:02d}"
-
-
-def speed_converter(seconds: float, speed: float) -> tuple[str, float]:
-    """Convert time and speed to a formatted time string."""
-    if speed == 0.5:
-        seconds *= 2
-    elif speed == 0.75:
-        seconds += (50 * seconds) // 100
-    elif speed == 1.5:
-        seconds -= (25 * seconds) // 100
-    elif speed == 2.0:
-        seconds -= (50 * seconds) // 100
-    return seconds_to_min(seconds), seconds
-
-
-def check_duration(file_path: str) -> float:
-    """Check the duration of a video file."""
-    command = [
-        "ffprobe",
-        "-loglevel",
-        "quiet",
-        "-print_format",
-        "json",
-        "-show_format",
-        "-show_streams",
-        file_path,
-    ]
-
-    pipe = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-    out, err = pipe.communicate()
-    json_data = json.loads(out)
-
-    if "format" in json_data:
-        if "duration" in json_data["format"]:
-            return float(json_data["format"]["duration"])
-
-    if "streams" in json_data:
-        for stream in json_data["streams"]:
-            if "duration" in stream:
-                return float(stream["duration"])
-
-    return -1
-
-
-# List of supported video formats
-FORMATS: list[str] = [
-    "webm",
-    "mkv",
-    "flv",
-    "vob",
-    "ogv",
-    "ogg",
-    "rrc",
-    "gifv",
-    "mng",
-    "mov",
-    "avi",
-    "qt",
-    "wmv",
-    "yuv",
-    "rm",
-    "asf",
-    "amv",
-    "mp4",
-    "m4p",
-    "m4v",
-    "mpg",
-    "mp2",
-    "mpeg",
-    "mpe",
-    "mpv",
-    "m4v",
-    "svi",
-    "3gp",
-    "3g2",
-    "mxf",
-    "roq",
-    "nsv",
-    "flv",
-    "f4v",
-    "f4p",
-   
+    return f"{d:02d}:{h:02d}:{m:02d}:{s:02d}" if d else f"{h:02d}:{m
