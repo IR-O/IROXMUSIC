@@ -28,10 +28,9 @@ def list_all_modules() -> list[str]:
         # Generate the module name by removing the current working directory
         # path, replacing the directory separator with a dot, and removing
         # the .py extension and the last dot
-        (((f.replace(work_dir, "")).replace("/", "."))[:-3])
+        os.path.splitext(os.path.relpath(f, work_dir).replace(os.sep, "."))[0]
         for f in mod_paths
-        if os.path.isfile(f) and f.endswith(".py") and
-        not f.endswith("__init__.py") and
+        if os.path.isfile(f) and not f.endswith("__init__.py") and
         not f.startswith("_") and
         f != __file__
     ]
@@ -42,10 +41,4 @@ def list_all_modules() -> list[str]:
 ALL_MODULES = list_all_modules()
 
 # Add ALL_MODULES to the __all__ list, along with any other desired modules
-__all__ = ALL_MODULES + ["ALL_MODULES"]
-
-
-import os
-
-def list_all_modules() -> list[str]:
-    """
+__all__ = ALL_MODULES + ["list_all_modules"]
