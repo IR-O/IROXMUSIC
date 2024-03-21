@@ -28,18 +28,26 @@ from IroXMusic.utils.database import (
 from IroXMusic.utils.decorators.language import language
 from IroXMusic.utils.pastebin import IropBin
 
+# This line disables the InsecureRequestWarning from urllib3
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)  # Initialize the logger
 
 
 async def is_heroku() -> bool:
+    """
+    A function to check if the code is running on Heroku.
+    Returns a boolean value.
+    """
     return "heroku" in socket.getfqdn()
 
 
 @app.on_message(filters.command(["getlog", "logs", "getlogs"]) & SUDOERS & LOVE)
 @language
 async def log_(client, message, _):
+    """
+    A function to send the log.txt file as a document when the /getlog, /logs, or /getlogs command is used by a SUDOER.
+    """
     try:
         await message.reply_document(document="log.txt")
     except FloodWait as e:
@@ -53,12 +61,15 @@ async def log_(client, message, _):
 @app.on_message(filters.command(["update", "gitpull"]) & SUDOERS & LOVE)
 @language
 async def update_(client, message, _):
+    """
+    A function to update the bot's code when the /update or /gitpull command is used by a SUDOER.
+    """
     if await is_heroku():
         if HAPP is None:
             return await message.reply_text(_["server_2"])
     response = await message.reply_text(_["server_3"])
     try:
-        repo = git.Repo()
+        repo = git.Repo()  # Initialize the Git repository object
     except git.exc.GitCommandError:
         return await response.edit(_["server_4"])
     except git.exc.InvalidGitRepositoryError:
@@ -80,17 +91,10 @@ async def update_(client, message, _):
         "tsnrhtdd"[(format // 10 % 10 != 1) * (format % 10 < 4) * format % 10 :: 4],
     )
     for info in repo.iter_commits(f"HEAD..origin/{config.UPSTREAM_BRANCH}"):
-        updates += f"<b>➣ #{info.count()}: <a href={REPO_}/commit/{info}>{info.summary}</a> ʙʏ -> {info.author}</b>\n\t\t\t\t<b>➥ ᴄᴏᴍᴍɪᴛᴇᴅ ᴏɴ :</b> {ordinal(int(datetime.fromtimestamp(info.committed_date).strftime('%d')))} {datetime.fromtimestamp(info.committed_date).strftime('%b')}, {datetime.fromtimestamp(info.committed_date).strftime('%Y')}\n\n"
+        updates += f"<b>➣ #{info.count()}: <a href={REPO_}/commit/{info}>{info.summary}</a> ʙʏ -> {info.author}</b>\n\t\t\t\t<b>➥ ᴄᴏᴍᴍɪᴛᴛᴇᴅ ᴏɴ :</b> {ordinal(int(datetime.fromtimestamp(info.committed_date).strftime('%d')))} {datetime.fromtimestamp(info.committed_date).strftime('%b')}, {datetime.fromtimestamp(info.committed_date).strftime('%Y')}\n\n"
     _update_response_ = "<b>ᴀ ɴᴇᴡ ᴜᴩᴅᴀᴛᴇ ɪs ᴀᴠᴀɪʟᴀʙʟᴇ ғᴏʀ ᴛʜᴇ ʙᴏᴛ !</b>\n\n➣ ᴩᴜsʜɪɴɢ ᴜᴩᴅᴀᴛᴇs ɴᴏᴡ\n\n<b><u>ᴜᴩᴅᴀᴛᴇs:</u></b>\n\n"
     _final_updates_ = _update_response_ + updates
     if len(_final_updates_) > 4096:
         url = await IropBin(updates)
         nrs = await response.edit(
-            f"<b>ᴀ ɴᴇᴡ ᴜᴩᴅᴀᴛᴇ ɪs ᴀᴠᴀɪʟᴀʙʟᴇ ғᴏʀ ᴛʜᴇ ʙᴏᴛ !</b>\n\n➣ ᴩᴜsʜɪɴɢ ᴜᴩᴅᴀᴛᴇs ɴᴏᴡ\n\n<u><b>ᴜᴩᴅᴀᴛᴇs :</b></u>\n\n<a href={url}>ᴄʜᴇᴄᴋ ᴜᴩᴅᴀᴛᴇs</a>"
-        )
-    else:
-        nrs = await response.edit(_final_updates_, disable_web_page_preview=True)
-    await repo.git.stash()
-    await repo.git.pull()
-
-   
+            f"<b>ᴀ ɴᴇᴡ ᴜᴩᴅᴀᴛᴇ ɪs ᴀᴠᴀɪʟᴀʙʟᴇ ғᴏʀ ᴛʜᴇ ʙᴏᴛ !</b>\n\n➣ ᴩᴜsʜ
