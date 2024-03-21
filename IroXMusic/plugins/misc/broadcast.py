@@ -1,60 +1,54 @@
 import asyncio
-from pyrogram import filters, Client as PyrogramClient  # Importing necessary modules and classes
+import re
+from typing import List, Tuple
+
+import pyrogram
 from pyrogram.enums import ChatMembersFilter
 from pyrogram.errors import FloodWait
-from typing import List
+from pyrogram.types import Message
 
-import IroXMusic.misc  # Importing custom modules
-import IroXMusic.utils.database
-from IroXMusic.utils.decorators.language import language
+from IroXMusic.misc import SUDOERS, LOVE, app, get_served_chats, get_served_users
+from IroXMusic.utils.database import get_client
 from IroXMusic.utils.formatters import alpha_to_int
-from config import adminlist
+from IroXMusic.utils.decorators.language import language
 
-# Global variable to keep track of broadcasting status
 IS_BROADCASTING = False
+ADMIN_IDS = [int(admin) for admin in adminlist.split()]
 
 
-@app.on_message(filters.command("broadcast") & SUDOERS & LOVE)  # Event decorator for the /broadcast command
+@app.on_message(SUDOERS & LOVE & pyrogram.filters.command("broadcast"))
 @language
-async def braodcast_message(client, message, _):
+async def broadcast_message(client, message: Message, _):
     global IS_BROADCASTING
-    if message.reply_to_message:
-        x = message.reply_to_message.id
-        y = message.chat.id
-    else:
-        if len(message.command) < 2:
-            return await message.reply_text(_["broad_2"])
-        query = message.text.split(None, 1)[1]
-        query = _parse_query(query)
+    if len(message.command) < 2:
+        return await message.reply_text(_["broad_2"])
+
+    query = message.text.split(None, 1)[1]
+    query = re.sub(r"(-pin|-nobot|-pinloud|-assistant|-user)", "", query)
+    if not query:
+        return await message.reply_text(_["broad_2"])
 
     IS_BROADCASTING = True
     await message.reply_text(_["broad_1"])
 
     if "-nobot" not in message.text:
-        sent, pin = await _broadcast_to_chats(client, query, x, y)
+        sent, pin = await _broadcast_to_chats(client, query, message)
         await message.reply_text(_["broad_3"].format(sent, pin))
 
     if "-user" in message.text:
-        sent = await _broadcast_to_served_users(client, query)
+        sent = await _broadcast_to_served_users(client, query, message)
         await message.reply_text(_["broad_4"].format(sent))
 
     if "-assistant" in message.text:
-        await message.reply_text(_["broad_5"])
         sent = await _broadcast_to_assistants(client, query)
+        await message.reply_text(_["broad_5"])
 
-
-def _parse_query(query: str) -> str:
-    # Parsing and cleaning the query string
-    query = query.replace("-pin", "").replace("-nobot", "").replace("-pinloud", "")
-    query = query.replace("-assistant", "").replace("-user", "")
-    if not query:
-        raise ValueError("Invalid query")
-    return query
+    IS_BROADCASTING = False
 
 
 async def _broadcast_to_chats(
-    client: PyrogramClient, query: str, x: int, y: int
-) -> tuple[int, int]:
+    client, query: str, message: Message
+) -> Tuple[int, int]:
     sent, pin = 0, 0
     chats = [int(chat["chat_id"]) for chat in await get_served_chats()]
     for i in chats:
@@ -62,7 +56,7 @@ async def _broadcast_to_chats(
             if not message.reply_to_message:
                 m = await app.send_message(i, text=query)
             else:
-                m = await app.forward_messages(i, y, x)
+                m = await app.forward_messages(i, message.reply_to_message.chat.id, message.reply_to_message.id)
             if "-pin" in message.text:
                 try:
                     await m.pin(disable_notification=True)
@@ -85,7 +79,7 @@ async def _broadcast_to_chats(
 
 
 async def _broadcast_to_served_users(
-    client: PyrogramClient, query: str
+    client, query: str, message: Message
 ) -> int:
     sent = 0
     served_users = [int(user["user_id"]) for user in await get_served_users()]
@@ -96,7 +90,7 @@ async def _broadcast_to_served_users(
             if not message.reply_to_message:
                 m = await app.send_message(i, text=query)
             else:
-                m = await app.forward_messages(i, y, x)
+                m = await app.forward_messages(i, message.reply_to_message.chat.id, message.reply_to_message.id)
             sent += 1
             await asyncio.sleep(0.2)
         except FloodWait as fw:
@@ -107,7 +101,7 @@ async def _broadcast_to_served_users(
 
 
 async def _broadcast_to_assistants(
-    client: PyrogramClient, query: str
+    client, query: str
 ) -> List[bool]:
     sent = []
     from IroXMusic.core.userbot import assistants
@@ -119,7 +113,7 @@ async def _broadcast_to_assistants(
             continue
         async for _ in client.get_dialogs():
             try:
-                await client.send_message(chat_id=_, text=query)
+                await client.send_message(chat_id=_.chat.id, text=query)
                 sent.append(True)
             except:
                 sent.append(False)
