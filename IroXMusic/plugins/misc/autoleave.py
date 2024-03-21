@@ -1,81 +1,22 @@
-import asyncio
-from datetime import datetime
+import asyncio  # for running multiple coroutines concurrently
+from datetime import datetime  # for handling date and time
 
-from pyrogram.enums import ChatType
+from pyrogram.enums import ChatType  # for handling different types of chats
 
-import config
-from IroXMusic import app
-from IroXMusic.core.call import Irop, autoend
-from IroXMusic.utils.database import get_client, is_active_chat, is_autoend
+import config  # for importing configuration settings
+from IroXMusic import app  # for importing the Pyrogram bot instance
+from IroXMusic.core.call import Irop, autoend  # for handling music playback and autoend functionality
+from IroXMusic.utils.database import get_client  # for handling database connections
 
+# A coroutine that automatically leaves inactive chats
 async def auto_leave():
     if not config.AUTO_LEAVING_ASSISTANT:
         return
 
     while True:
         try:
-            async with get_client(config.ASSISTANT_USER_ID) as client:
-                async for dialog in client.get_dialogs():
-                    if dialog.chat.type in [
+            async with get_client(config.ASSISTANT_USER_ID) as client:  # create a database connection and get the client instance
+                async for dialog in client.get_dialogs():  # iterate over all dialogs
+                    if dialog.chat.type in [  # check if the dialog is a group, supergroup, or channel
                         ChatType.SUPERGROUP,
-                        ChatType.GROUP,
-                        ChatType.CHANNEL,
-                    ]:
-                        if dialog.chat.id not in [
-                            config.LOGGER_ID,
-                            -1001653694038,
-                            -1001698464500,
-                        ]:
-                            if not await is_active_chat(dialog.chat.id):
-                                try:
-                                    await client.leave_chat(dialog.chat.id)
-                                except:
-                                    pass
-        except:
-            await asyncio.sleep(10)
-
-        await asyncio.sleep(900)
-
-async def auto_end():
-    if not await is_autoend():
-        return
-
-    while True:
-        try:
-            for chat_id, timer in autoend.items():
-                if not timer:
-                    continue
-
-                if datetime.now() > timer:
-                    if not await is_active_chat(chat_id):
-                        del autoend[chat_id]
-                        continue
-
-                    try:
-                        await Irop.stop_stream(chat_id)
-                    except:
-                        pass
-
-                    try:
-                        await app.send_message(
-                            chat_id,
-                            "» ʙᴏᴛ ᴀᴜᴛᴏᴍᴀᴛɪᴄᴀʟʟʏ ʟᴇғᴛ ᴠɪᴅᴇᴏᴄʜᴀᴛ ʙᴇᴄᴀᴜsᴇ ɴᴏ ᴏɴᴇ ᴡᴀs ʟɪsᴛᴇɴɪɴɢ ᴏɴ ᴠɪᴅᴇᴏᴄʜᴀᴛ.",
-                        )
-                    except:
-                        pass
-
-                    del autoend[chat_id]
-
-        except:
-            await asyncio.sleep(10)
-
-        await asyncio.sleep(5)
-
-async def main():
-    await asyncio.gather(
-        auto_leave(),
-        auto_end()
-    )
-
-if __name__ == "__main__":
-    asyncio.run(main())
+                
