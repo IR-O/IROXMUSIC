@@ -1,9 +1,9 @@
 aiofiles
-bard
+Bard
 SpeechRecognition
 pornhub-api==0.2.0
-aiohttp 
-asyncio 
+aiohttp
+asyncio
 beautifulsoup4
 daxxhub
 deepai
@@ -16,10 +16,10 @@ Faker
 pydub
 pycountry
 heroku3
-apscheduler
-motor 
+APScheduler
+motor
 numpy
-pillow==9.5.0
+pillow
 psutil
 wget
 pyfiglet
@@ -42,9 +42,8 @@ telegraph
 unidecode
 yt-dlp
 youtube-search
-youtube-search-python
 gtts
-git+https://github.com/AsmSafone/SafoneAPI
+SafoneAPI @ git+https://github.com/AsmSafone/SafoneAPI.git
 lexica-api==1.5.1
 httpx==0.25.2
 gpytranslate
