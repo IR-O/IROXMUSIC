@@ -1,9 +1,16 @@
 import math
-from pyrogram.types import InlineKeyboardButton
+from typing import List, Union
+
+from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
 from IroXMusic.utils.formatters import time_to_seconds
 
-def track_markup(*, videoid, user_id, channel, fplay):
+def track_markup(
+    videoid: str,
+    user_id: int,
+    channel: str,
+    fplay: str
+) -> List[List[Union[InlineKeyboardButton, str]]]:
     """
     Generate InlineKeyboardMarkup for track
     """
@@ -28,7 +35,11 @@ def track_markup(*, videoid, user_id, channel, fplay):
     return buttons
 
 
-def stream_markup_timer(*, chat_id, played, dur):
+def stream_markup_timer(
+    chat_id: int,
+    played: str,
+    dur: str
+) -> List[List[Union[InlineKeyboardButton, str]]]:
     """
     Generate InlineKeyboardMarkup for stream timer
     """
@@ -82,7 +93,9 @@ def stream_markup_timer(*, chat_id, played, dur):
     return buttons
 
 
-def stream_markup(*, chat_id):
+def stream_markup(
+    chat_id: int
+) -> List[List[Union[InlineKeyboardButton, str]]]:
     """
     Generate InlineKeyboardMarkup for stream
     """
@@ -99,7 +112,13 @@ def stream_markup(*, chat_id):
     return buttons
 
 
-def playlist_markup(*, videoid, user_id, ptype, channel, fplay):
+def playlist_markup(
+    videoid: str,
+    user_id: int,
+    ptype: str,
+    channel: str,
+    fplay: str = None
+) -> List[List[Union[InlineKeyboardButton, str]]]:
     """
     Generate InlineKeyboardMarkup for playlist
     """
@@ -123,18 +142,3 @@ def playlist_markup(*, videoid, user_id, ptype, channel, fplay):
     ]
     return buttons
 
-
-def livestream_markup(*, videoid, user_id, mode, channel, fplay):
-    """
-    Generate InlineKeyboardMarkup for live stream
-    """
-    buttons = [
-        [
-            InlineKeyboardButton(
-                text=_["P_B_3"],
-                callback_data=f"LiveStream {videoid}|{user_id}|{mode}|{channel}|{fplay}",
-            ),
-        ],
-        [
-            InlineKeyboardButton(
-                text=_["CLOSE_BUTTON"],
