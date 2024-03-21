@@ -1,15 +1,15 @@
 import socket
 import time
+import asyncio
+from typing import List, Dict, Optional
 
 import heroku3
 from pyrogram import filters
 from pymongo import MongoClient
-from typing import List, Dict, Optional
 
 import config
 from .logging import LOGGER
 
-# Global variable to store the time when the script started
 _boot_ = time.time()
 
 def is_heroku() -> bool:
@@ -36,16 +36,16 @@ XCB = [
     "main",
 ]
 
-def dbb() -> None:
+async def init_db() -> None:
     """Initializes an empty dictionary 'db' and logs a message indicating that the local database has been initialized.
 
-    This function is used to initialize an empty local database as a dictionary.
+    This asynchronous function is used to initialize an empty local database as a dictionary.
     """
     global db
     db = {}
     LOGGER(__name__).info("Local Database Initialized.")
 
-async def sudo() -> None:
+async def load_sudoers() -> None:
     """Loads the sudoers list from the MongoDB database and adds the owner ID to it if it's not already present.
 
     This asynchronous function is used to load the sudoers list from the MongoDB database and adds the owner ID
@@ -55,4 +55,12 @@ async def sudo() -> None:
     SUDOERS.add(config.OWNER_ID)
     sudoersdb = MongoClient(config.MONGO_URL, connect=False).IroXMusic.sudoers
     sudoers = await sudoersdb.find_one({"sudo": "sudo"})
-    sudoers = [] if not sudo
+    sudoers = [] if not sudo else sudo
+
+async def main():
+    await init_db()
+    await load_sudoers()
+
+if __name__ == "__main__":
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(main())
