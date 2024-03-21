@@ -5,54 +5,35 @@ from IroXMusic.misc import SUDOERS
 from IroXMusic.utils.database import get_lang, is_maintenance
 
 
+async def get_chat_language(chat_id):
+    try:
+        language = await get_lang(chat_id)
+        return get_string(language)
+    except:
+        return get_string("en")
+
+
 def language(mystic):
     async def wrapper(_, message, **kwargs):
-        if await is_maintenance() is False:
-            if message.from_user.id not in SUDOERS:
-                return await message.reply_text(
-                    text=f"{app.mention} ɪs ᴜɴᴅᴇʀ ᴍᴀɪɴᴛᴇɴᴀɴᴄᴇ, ᴠɪsɪᴛ <a href={SUPPORT_CHAT}>sᴜᴘᴘᴏʀᴛ ᴄʜᴀᴛ</a> ғᴏʀ ᴋɴᴏᴡɪɴɢ ᴛʜᴇ ʀᴇᴀsᴏɴ.",
-                    disable_web_page_preview=True,
-                )
-        try:
-            await message.delete()
-        except:
-            pass
-
-        try:
-            language = await get_lang(message.chat.id)
-            language = get_string(language)
-        except:
-            language = get_string("en")
-        return await mystic(_, message, language)
+        if not await is_maintenance():
+            message.language = await get_chat_language(message.chat.id)
+        return await mystic(_, message)
 
     return wrapper
 
 
 def languageCB(mystic):
     async def wrapper(_, CallbackQuery, **kwargs):
-        if await is_maintenance() is False:
-            if CallbackQuery.from_user.id not in SUDOERS:
-                return await CallbackQuery.answer(
-                    f"{app.mention} ɪs ᴜɴᴅᴇʀ ᴍᴀɪɴᴛᴇɴᴀɴᴄᴇ, ᴠɪsɪᴛ sᴜᴘᴘᴏʀᴛ ᴄʜᴀᴛ ғᴏʀ ᴋɴᴏᴡɪɴɢ ᴛʜᴇ ʀᴇᴀsᴏɴ.",
-                    show_alert=True,
-                )
-        try:
-            language = await get_lang(CallbackQuery.message.chat.id)
-            language = get_string(language)
-        except:
-            language = get_string("en")
-        return await mystic(_, CallbackQuery, language)
+        if not await is_maintenance():
+            CallbackQuery.message.language = await get_chat_language(CallbackQuery.message.chat.id)
+        return await mystic(_, CallbackQuery)
 
     return wrapper
 
 
 def LanguageStart(mystic):
     async def wrapper(_, message, **kwargs):
-        try:
-            language = await get_lang(message.chat.id)
-            language = get_string(language)
-        except:
-            language = get_string("en")
-        return await mystic(_, message, language)
+        message.language = await get_chat_language(message.chat.id)
+        return await mystic(_, message)
 
     return wrapper
