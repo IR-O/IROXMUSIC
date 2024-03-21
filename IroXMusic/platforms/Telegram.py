@@ -14,7 +14,6 @@ from IroXMusic.utils.formatters import (
     seconds_to_min,
 )
 
-
 class TeleAPI:
     def __init__(self):
         self.chars_limit = 4096
@@ -149,28 +148,4 @@ class TeleAPI:
                             except:
                                 pass
 
-            speed_counter[message.id] = time.time()
-            try:
-                await app.download_media(
-                    message.reply_to_message,
-                    file_name=fname,
-                    progress=progress,
-                )
-                try:
-                    elapsed = get_readable_time(
-                        int(int(time.time()) - int(speed_counter[message.id]))
-                    )
-                except:
-                    elapsed = "0 sᴇᴄᴏɴᴅs"
-                await mystic.edit_text(_["tg_2"].format(elapsed))
-            except:
-                await mystic.edit_text(_["tg_3"])
-
-        task = asyncio.create_task(down_load())
-        config.lyrical[mystic.id] = task
-        await task
-        verify = config.lyrical.get(mystic.id)
-        if not verify:
-            return False
-        config.lyrical.pop(mystic.id)
-        return True
+            speed_counter[message.
