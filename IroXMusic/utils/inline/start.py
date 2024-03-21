@@ -25,10 +25,10 @@ def start_panel() -> List[List[InlineKeyboardButton]]:
     # This function returns a list of lists of InlineKeyboardButton objects,
     # which represents the start panel.
     return [
-        [
+        (
             get_button(config.START_BUTTON_1, f"https://t.me/{app.username}?startgroup=true"),
-            get_button(config.START_BUTTON_2, config.SUPPORT_CHAT),
-        ]
+            get_button(config.START_BUTTON_2, get_support_chat()),
+        )
     ]
 
 def private_panel() -> List[List[InlineKeyboardButton]]:
@@ -37,7 +37,11 @@ def private_panel() -> List[List[InlineKeyboardButton]]:
     support_chat = get_support_chat()
     owner_id = get_owner_id()
     return [
-        [
+        (
             get_button(config.PRIVATE_BUTTON_3, f"https://t.me/{app.username}?startgroup=true"),
-        ],
-       
+        ),
+        (
+            get_button("Support", support_chat),
+            get_button("Owner", f"https://t.me/{app.username}?start=owner_{owner_id}"),
+        )
+    ]
