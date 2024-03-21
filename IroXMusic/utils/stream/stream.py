@@ -1,38 +1,24 @@
-import os
-from random import randint
-from typing import Union
-
-import pyrogram
-from pyrogram.types import InlineKeyboardMarkup, Message
-
-import config
-from IroXMusic import Carbon, YouTube, app
-from IroXMusic.core.call import Irop
-from IroXMusic.misc import db
-from IroXMusic.utils.database import add_active_video_chat, is_active_chat
-from IroXMusic.utils.exceptions import AssistantErr
-from IroXMusic.utils.inline import aq_markup, close_markup, stream_markup
-from IroXMusic.utils.pastebin import IropBin
-from IroXMusic.utils.stream.queue import put_queue, put_queue_index
-from IroXMusic.utils.thumbnails import get_thumb
-
 class StreamHandler:
     @staticmethod
     async def stream(
         *,
-        mystic: pyrogram.types.Message,
-        user_id: int,
-        result,
-        chat_id: int,
-        user_name: str,
-        original_chat_id: int,
-        video: Union[bool, str] = None,
-        streamtype: Union[bool, str] = None,
-        spotify: Union[bool, str] = None,
-        forceplay: Union[bool, str] = None,
+        mystic: pyrogram.types.Message,  # The message object that triggered the stream.
+        user_id: int,  # The ID of the user who triggered the stream.
+        result,  # The result of the search query.
+        chat_id: int,  # The ID of the chat where the stream will be played.
+        user_name: str,  # The username of the user who triggered the stream.
+        original_chat_id: int,  # The original chat ID where the stream will be played.
+        video: Union[bool, str] = None,  # Whether to stream a video or not.
+        streamtype: Union[bool, str] = None,  # The type of stream.
+        spotify: Union[bool, str] = None,  # Whether to force Spotify playback or not.
+        forceplay: Union[bool, str] = None,  # Whether to force play the stream or not.
     ) -> Message:
         """
         Handles streaming of various types of media.
+
+        This method determines the type of stream requested by the user and delegates the streaming process to the appropriate
+        private method within the `StreamHandler` class. It supports streaming from YouTube, SoundCloud, Telegram, and
+        Live DVR sources, as well as playing playlists and indexes.
 
         :param mystic: The message object that triggered the stream.
         :param user_id: The ID of the user who triggered the stream.
@@ -46,12 +32,15 @@ class StreamHandler:
         :param forceplay: Whether to force play the stream or not.
         :return: The message object that acknowledges the stream has started.
         """
+        # If there's no result, return without doing anything.
         if not result:
             return
 
+        # If forceplay is set to True, stop any currently playing stream.
         if forceplay:
             await Irop.force_stop_stream(chat_id)
 
+        # Determine the stream type and delegate the streaming process to the appropriate private method.
         match streamtype:
             case "playlist":
                 return await StreamHandler._playlist_stream(
@@ -122,28 +111,3 @@ class StreamHandler:
                 )
             case _:
                 raise AssistantErr("Invalid stream type")
-    
-    @staticmethod
-    async def _playlist_stream(
-        *,
-        mystic: pyrogram.types.Message,
-        user_id: int,
-        result,
-        chat_id: int,
-        user_name: str,
-        original_chat_id: int,
-        video: Union[bool, str] = None,
-        spotify: Union[bool, str] = None,
-        forceplay: Union[bool, str] = None,
-    ) -> Message:
-        msg = f"{config.PLAY_19}\n\n"
-        count = 0
-        for search in result:
-            if int(count) == config.PLAYLIST_FETCH_LIMIT:
-                continue
-            try:
-                (
-                    title,
-                    duration_min,
-                    duration_sec,
-                    thumb
