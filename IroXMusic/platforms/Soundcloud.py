@@ -1,8 +1,9 @@
-from os import path  # Importing path from os module for file path manipulation
+import os
+from pathlib import Path
+from typing import Tuple, Dict
 
-from yt_dlp import YoutubeDL  # Importing YoutubeDL from yt\_dlp module for downloading youtube videos
-
-from IroXMusic.utils.formatters import seconds_to_min  # Importing seconds\_to\_min from formatters for converting seconds to minutes
+import youtube_dl
+from IroXMusic.utils.formatters import seconds_to_min
 
 class SoundAPI:
     def __init__(self):
@@ -17,27 +18,28 @@ class SoundAPI:
             "continuedl": True,  # Whether to continue downloading a partially downloaded file
         }
 
-    async def valid(self, link: str):
+    def is_soundcloud_link(self, link: str) -> bool:
         """
         Checks if the given link is a soundcloud link.
         :param link: The link to check
         :return: True if the link is a soundcloud link, False otherwise
         """
-        if "soundcloud" in link:
-            return True
-        else:
-            return False
+        return "soundcloud" in link
 
-    async def download(self, url):
+    def download(self, url: str) -> Tuple[Dict, str]:
         """
         Downloads the given url and returns the track details and the filepath of the downloaded file.
         :param url: The url to download
         :return: A tuple containing the track details and the filepath of the downloaded file
         """
-        d = YoutubeDL(self.opts)  # Initialize YoutubeDL with the default options
+        download_dir = Path("downloads")
+        download_dir.mkdir(parents=True, exist_ok=True)
+
+        ydl = youtube_dl.YoutubeDL(self.opts)
         try:
-            info = d.extract_info(url)  # Extract information about the url
-        except:
-            return False  # If an exception occurs, return False
-        xyz = path.join("downloads", f"{info['id']}.{info['ext']}")  # Construct the filepath of the downloaded file
-        duration
+            info = ydl.extract_info(url)  # Extract information about the url
+        except youtube_dl.DownloadError:
+            return False, ""
+
+        filepath = download_dir / f"{info['id']}.{info['ext']}"
+        return info, str(filepath)
