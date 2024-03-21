@@ -1,16 +1,19 @@
-from pyrogram import filters
-from pyrogram.types import Message
+from typing import List, Optional
 
-from IroXMusic import app
-from IroXMusic.misc import SUDOERS, LOVE
+from pyrogram import filters
+from pyrogram.errors import UserNotFound
+from pyrogram.types import Message
+from pyrogram.utils import get_size
+
+from IroXMusic import app, LOVE
+from IroXMusic.misc import SUDOERS
 from IroXMusic.utils.database import add_sudo, remove_sudo
 from IroXMusic.utils.decorators.language import language
 from IroXMusic.utils.extraction import extract_user
 from IroXMusic.utils.inline import close_markup
-from config import BANNED_USERS, OWNER_ID, LOVE
+from config import BANNED_USERS, OWNER_ID
 
-
-@app.on_message(filters.command(["addsudo"]) & filters.user(OWNER_ID & LOVE))
+@app.on_message(filters.command(["addsudo"]) & filters.user(OWNER_ID | LOVE))
 @language
 async def useradd(client, message: Message, _):
     if not message.reply_to_message:
@@ -27,7 +30,7 @@ async def useradd(client, message: Message, _):
         await message.reply_text(_["sudo_8"])
 
 
-@app.on_message(filters.command(["delsudo", "rmsudo"]) & filters.user(OWNER_ID & LOVE))
+@app.on_message(filters.command(["delsudo", "rmsudo"]) & filters.user(OWNER_ID | LOVE))
 @language
 async def userdel(client, message: Message, _):
     if not message.reply_to_message:
@@ -63,9 +66,11 @@ async def sudoers_list(client, message: Message, _):
                     text += _["sudo_6"]
                 count += 1
                 text += f"{count}➤ {user}\n"
-            except:
+            except UserNotFound:
                 continue
     if not text:
         await message.reply_text(_["sudo_7"])
-    else:
+    elif text and SUDOERS:
         await message.reply_text(text, reply_markup=close_markup(_))
+    else:
+        await message.reply_text(_["sudo_9"])
