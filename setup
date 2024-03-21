@@ -1,9 +1,13 @@
 #!/bin/bash
 
+# has_sudo_privileges()
+# This function checks if the user has sudo privileges
 has_sudo_privileges() {
   sudo -v >/dev/null 2>&1
 }
 
+# print_with_color()
+# This function prints a message in a specified color
 print_with_color() {
   local color="$1"
   local message="$2"
@@ -21,6 +25,8 @@ print_with_color() {
   printf "${color}%s${reset_color}\n" "${message}"
 }
 
+# yes_no_prompt()
+# This function prompts the user to enter 'y' or 'n' and returns the result
 yes_no_prompt() {
   local old_stty_cfg=$(stty -g)
   stty raw -echo
@@ -29,6 +35,8 @@ yes_no_prompt() {
   echo "${answer}" | grep -iq "^y"
 }
 
+# update_package_list()
+# This function updates the package list and upgrades the packages if an update is available
 update_package_list() {
   print_with_color "nocolor" "\nUpdating package list..."
   sudo apt update 2>&1 | grep -q "can be upgraded"
@@ -47,6 +55,8 @@ update_package_list() {
   fi
 }
 
+# install_package()
+# This function installs a package if it is not already installed
 install_package() {
   local package_name="$1"
   if ! command -v "${package_name}" &>/dev/null; then
@@ -63,6 +73,8 @@ install_package() {
   fi
 }
 
+# check_ffmpeg_version()
+# This function checks the version of ffmpeg and prints a message if the version is lower than 4.0
 check_ffmpeg_version() {
   local ffmpeg_version=$(ffmpeg -version | grep -Po 'version \K[0-9.]*')
   if (( $(echo "$ffmpeg_version < 4.0" | bc -l) )); then
@@ -70,6 +82,8 @@ check_ffmpeg_version() {
   fi
 }
 
+# install_nodejs_and_npm()
+# This function installs nodejs and npm if they are not already installed
 install_nodejs_and_npm() {
   if ! command -v npm &>/dev/null; then
     print_with_color "nocolor" "Installing Nodejs and Npm..."
@@ -80,6 +94,8 @@ install_nodejs_and_npm() {
   fi
 }
 
+# upgrade_pip_and_install_dependencies()
+# This function upgrades pip and installs the required dependencies
 upgrade_pip_and_install_dependencies() {
   print_with_color "nocolor" "Upgrading pip and installing dependency packages..."
   pip3 install -U pip &>>pypilog.txt
@@ -87,21 +103,8 @@ upgrade_pip_and_install_dependencies() {
   print_with_color "cgreen" "DONE."
 }
 
+# main()
+# This is the main function that runs the entire script
 main() {
   if ! has_sudo_privileges; then
-    print_with_color "cred" "Script needs sudo privileges in order to update & install packages."
-    exit 1
-  fi
-
-  print_with_color "nocolor" "Welcome to IroXMusic Setup Installer\n\n"
-  print_with_color "nocolor" "If you see any error during Installation Process, Please refer to these files for logs: "
-  print_with_color "nocolor" "\nFor node js errors , Checkout nodelog.txt"
-  print_with_color "nocolor" "\nFor pypi packages errors , Checkout pypilog.txt"
-
-  update_package_list
-  install_package "ffmpeg"
-  check_ffmpeg_version
-  install_nodejs_and_npm
-  upgrade_pip_and_install_dependencies
-
-  print_
+    print_with_color "
