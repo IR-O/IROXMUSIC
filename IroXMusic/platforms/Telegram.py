@@ -76,23 +76,26 @@ class TeleAPI:
             dur = "Unknown"
         return dur
 
-    async def get_duration(self, filex, file_path):
+    async def get_duration(self, filex, file_path=None):
         """
         Returns the duration of the file in minutes.
 
         :param filex: The Pyrogram File object or Voice object
-        :param file_path: The file path as a string
+        :param file_path: The file path as a string (optional)
         :return: The duration as a string
         """
         try:
             dur = seconds_to_min(filex.duration)
         except:
-            try:
-                dur = await asyncio.get_event_loop().run_in_executor(
-                    None, check_duration, file_path
-              `enter code here`                )
-                dur = seconds_to_min(dur)
-            except:
+            if file_path:
+                try:
+                    dur = await asyncio.get_event_loop().run_in_executor(
+                        None, check_duration, file_path
+                    )
+                    dur = seconds_to_min(dur)
+                except:
+                    return "Unknown"
+            else:
                 return "Unknown"
         return dur
 
@@ -144,6 +147,4 @@ class TeleAPI:
         """
         lower = [0, 8, 17, 38, 64, 77, 96]
         higher = [5, 10, 20, 40, 66, 80, 99]
-        checker = [5, 10, 20, 40, 66, 80, 99]
-        speed_counter = {}
-        if os.path.exists(
+        checker = [5, 10, 20, 40, 66, 80, 99
