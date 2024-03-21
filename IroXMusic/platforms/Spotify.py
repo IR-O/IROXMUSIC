@@ -22,7 +22,7 @@ class SpotifyAPI:
         self.client_secret = config.SPOTIFY_CLIENT_SECRET  # Spotify API client secret
         self.scope = "playlist-read-private user-library-read"  # Spotify API scope
         self.redirect_uri = "http://localhost:8888/callback"  # Spotify API redirect URI
-        self.sp = None
+        self.sp = None  # Spotify API client
 
     def get_auth_manager(self):
         """
@@ -62,11 +62,14 @@ class SpotifyAPI:
         await self.authenticate()
         if not self.regex.match(link):
             raise ValueError("Invalid Spotify track link")
+
         track = self.sp.track(link)
         info = self.get_artist_names(track['artists']) + " " + track['name']
         results = await self.search_youtube(info)
+
         if not results:
             raise ValueError("No YouTube video found for the track")
+
         track_details = {
             "title": results[0]["title"],
             "link": results[0]["link"],
@@ -84,6 +87,7 @@ class SpotifyAPI:
         await self.authenticate()
         if not self.regex.match(url):
             raise ValueError("Invalid Spotify playlist link")
+
         playlist = self.sp.playlist(url)
         results = [
             self.get_artist_names(item['track']['artists']) + " " + item['track']['name']
@@ -99,6 +103,7 @@ class SpotifyAPI:
         await self.authenticate()
         if not self.regex.match(url):
             raise ValueError("Invalid Spotify album link")
+
         album = self.sp.album(url)
         results = [
             self.get_artist_names(item['artists']) + " " + item['name']
@@ -114,6 +119,7 @@ class SpotifyAPI:
         await self.authenticate()
         if not self.regex.match(url):
             raise ValueError("Invalid Spotify artist link")
+
         artistinfo = self.sp.artist(url)
         artist_id = artistinfo["id"]
         results = [
@@ -142,5 +148,4 @@ class SpotifyAPI:
             return {
                 "title": result["title"],
                 "link": result["link"],
-                "vidid": result["id"],
-                "duration_min":
+                "vidid": result["
