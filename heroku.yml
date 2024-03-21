@@ -1,20 +1,21 @@
-# This is a Docker Compose file, version 2, which defines two services: builder and runner.
+# This is a Docker Compose file, version 3.8, which defines two services: builder and runner.
 
 # The builder service uses the latest version of the official Docker image and mounts the current directory to /app inside the container.
-# The command specified for this service is "docker build -t my-image /app", which builds a Docker image named "my-image" using the Dockerfile located in the /app directory.
+# The command specified for this service is "docker build -t my-image ." which builds a Docker image named "my-image" using the Dockerfile located in the current directory.
 services:
   builder:
     image: docker:latest
     volumes:
       - .:/app  # Mounts the current directory to /app inside the container
-    command: ["docker", "build", "-t", "my-image", "/app"]
+    command: ["docker", "build", "-t", "my-image", "."]
 
 # The runner service uses the latest version of the Alpine Linux image and mounts the current directory to /app inside the container.
-# The command specified for this service is "bash /app/start", which runs the start script located in the /app directory.
+# The command specified for this service is "bash /app/start" which runs the start script located in the /app directory.
   runner:
     image: alpine:latest
     volumes:
       - .:/app  # Mounts the current directory to /app inside the container
-    command: ["bash", "/app/start"]
+    command: ["sh", "/app/start"]
 
 # Note: It's important to ensure that the necessary files and dependencies are present in the /app directory for both services to run successfully.
+
