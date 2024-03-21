@@ -127,11 +127,4 @@ def playmode_users_markup(
         [
             InlineKeyboardButton(text=locale_dict["ST_B_10"], callback_data="SEARCHANSWER"),
             InlineKeyboardButton(
-                text=locale_dict["ST_B_11"] if direct else locale_dict["ST_B_12"],
-                callback_data="MODECHANGE",
-            ),
-        ],
-        [
-            InlineKeyboardButton(text=locale_dict["ST_B_13"], callback_data="AUTHANSWER"),
-            InlineKeyboardButton(
-                text=locale_dict["ST
+                text=locale_dict["ST_B_11"] if direct else locale_dict
