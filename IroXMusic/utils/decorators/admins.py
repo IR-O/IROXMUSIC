@@ -1,7 +1,7 @@
 from pyrogram.enums import ChatType
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
-# IroXMusic import statements
+# IroXMusic imports
 from IroXMusic import app, LOGGER
 from IroXMusic.misc import SUDOERS, db
 from IroXMusic.utils.database import (
@@ -15,7 +15,7 @@ from IroXMusic.utils.database import (
     is_skipmode,
 )
 
-# config import statements
+# config imports
 from config import SUPPORT_CHAT, adminlist, confirmer
 from strings import get_string
 
@@ -23,9 +23,12 @@ from strings import get_string
 async def int_to_alpha(user_id: int) -> str:
     return "".join(chr(int(user_id // (10 ** i)) % 10 + 48) for i in range(7, 0, -1))
 
-def AdminRightsCheck(mystic):
+def AdminRightsCheck(func):
     """
-    Decorator function to check for admin rights. This function checks if the bot is in maintenance mode, if the message is from a sender chat, if the chat is active, and if the chat is not a non-admin chat. If all checks pass, it checks if the user is a sudo user and if skipmode is enabled. If skipmode is enabled, it calculates the number of votes needed for the action and creates an inline keyboard with a vote button.
+    Decorator function to check for admin rights.
+    This function checks if the bot is in maintenance mode, if the message is from a sender chat, if the chat is active, and if the chat is not a non-admin chat.
+    If all checks pass, it checks if the user is a sudo user and if skipmode is enabled.
+    If skipmode is enabled, it calculates the number of votes needed for the action and creates an inline keyboard with a vote button.
     """
     async def wrapper(client, message):
         try:
@@ -57,7 +60,7 @@ def AdminRightsCheck(mystic):
                         [
                             InlineKeyboardButton(
                                 text="how to fix ?",
-                                callback_data="AnonymousAdmin",
+                                callback_data="anonymous_admin",
                             ),
                         ]
                     ]
@@ -77,25 +80,21 @@ def AdminRightsCheck(mystic):
                         # Get the upvote count
                         upvote = await get_upvote_count(message.chat.id)
                         # Calculate the number of votes needed for the action
-                        text = f"""<b>admin rights needed</b>
-
-refresh admin cache via : /reload
-
-» {upvote} votes needed for performing this action."""
+                        text = f"<b>admin rights needed</b>\n\nrefresh admin cache via : /reload\n\n» {upvote} votes needed for performing this action."
 
                         command = message.command[0]
                         if command[0] == "c":
                             command = command[1:]
                         if command == "speed":
                             return await message.reply_text(_["admin_14"])
-                        MODE = command.title()
+                        mode = command.title()
                         # Create an inline keyboard with a vote button
                         upl = InlineKeyboardMarkup(
                             [
                                 [
                                     InlineKeyboardButton(
                                         text="vote",
-                                        callback_data=f"ADMIN UpVote|{message.chat.id}_{MODE}",
+                                        callback_data=f"admin upvote|{message.chat.id}_{mode}",
                                     ),
                                 ]
                             ]
@@ -105,7 +104,7 @@ refresh admin cache via : /reload
                             "video": message.video,
                             "file": message.document,
                             "text": text,
-                            "mode": MODE,
+                            "mode": mode,
                         }
                         return await message.reply_text(
                             text=text,
