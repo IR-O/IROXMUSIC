@@ -1,22 +1,42 @@
-from pyrogram.enums import ParseMode  # Importing ParseMode enum from pyrogram library
-from pyrogram.errors import ChatAdminRequired, UserIsBlocked  # Importing required exceptions
+from pyrogram.enums import ParseMode
+from pyrogram.errors import ChatAdminRequired, UserIsBlocked
 
-from IroXMusic import app, LOGGER_ID, USERNAME  # Importing app, LOGGER_ID, and USERNAME from the IroXMusic module
-from IroXMusic.utils.database import is_on_off  # Importing is_on_off function from the database utilities
-from IroXMusic.utils.decorators import errors  # Importing errors decorator
+from IroXMusic import app, LOGGER_ID, USERNAME
+from IroXMusic.utils.database import is_on_off
+from IroXMusic.utils.decorators import errors
 
-@errors  # Decorating the function with errors decorator
-async def play_logs(message, streamtype):  # Defining the asynchronous function play_logs with message and streamtype as parameters
-    if not await is_on_off(2):  # If the value returned by is_on_off(2) is False
-        return  # Exit the function
+@errors
+async def play_logs(message, streamtype):
+    if not await is_on_off(2):
+        return
 
     try:
-        logger_text = f"""  # Initializing the logger_text variable with the following formatted string
-            <b>{app.mention} ᴘʟᴀʏ ʟᴏɢ</b>  # Bold text for 'IroXMusic Play Log'
+        logger_text = (
+            f"<b>{app.mention} ᴘʟᴀʏ ʟᴏɢ</b>\n"
+            f"<b>ᴄʜᴀᴛ ɪᴅ :</b> <code>{message.chat.id}</code>\n"
+            f"<b>ᴄʜᴀᴛ ɴᴀᴍᴇ :</b> {message.chat.title}\n"
+            f"<b>ᴄʜᴀᴛ ᴜsᴇʀɴᴀᴍᴇ :</b> @{message.chat.username}\n"
+            f"<b>ᴜsᴇʀ ɪᴅ :</b> <code>{message.from_user.id}</code>\n"
+            f"<b>ɴᴀᴍᴇ :</b> {message.from_user.first_name}\n"
+            f"<b>ᴜsᴇʀɴᴀᴍᴇ :</b> @{message.from_user.username}\n"
+            f"<b>sᴛʀᴇᴀᴍ ᴛʏᴘᴇ :</b> {streamtype}"
+        )
 
-            <b>ᴄʜᴀᴛ ɪᴅ :</b> <code>{message.chat.id}</code>  # Bold text for 'Chat ID' followed by the chat ID in code format
-            <b>ᴄʜᴀᴛ ɴᴀᴍᴇ :</b> {message.chat.title}  # Bold text for 'Chat Name' followed by the chat title
-            <b>ᴄʜᴀᴛ ᴜsᴇʀɴᴀᴍᴇ :</b> @{message.chat.username}  # Bold text for 'Chat Username' followed by the chat username
+        await app.send_message(
+            LOGGER_ID,
+            text=logger_text,
+            parse_mode=ParseMode.HTML,
+            disable_web_page_preview=True,
+        )
 
-            <b>ᴜsᴇʀ ɪᴅ :</b> <code>{message.from_user.id}</code>  # Bold text for 'User ID' followed by the user ID in code format
-            <b>ɴᴀᴍᴇ :
+    except ChatAdminRequired:
+        await message.reply(
+            "⚠️ **I'm not a chat administrator, please add me as one and try again.**",
+            parse_mode=ParseMode.MARKDOWN,
+        )
+
+    except UserIsBlocked:
+        await message.reply(
+            "⚠️ **You blocked me, unblock me and try again.**",
+            parse_mode=ParseMode.MARKDOWN,
+        )
