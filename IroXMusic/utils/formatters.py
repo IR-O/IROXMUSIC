@@ -5,6 +5,9 @@ def get_readable_time(seconds: int) -> str:
     """
     Convert a given number of seconds into a human-readable time string in the format of "Xh Ym Zs".
 
+    This function takes an integer representing the number of seconds and returns a string
+    with a formatted time representation, using hours, minutes, and seconds.
+
     :param seconds: The number of seconds to convert to a human-readable time string.
     :return: A string representation of the time in the format of "Xh Ym Zs".
     """
@@ -29,6 +32,9 @@ def convert_bytes(size: float) -> str:
     """
     Convert a given number of bytes into a human-readable string with appropriate units.
 
+    This function takes a floating-point number representing the size in bytes and returns
+    a string with a formatted size representation, using units such as KB, MB, GB, or TB.
+
     :param size: The number of bytes to convert to a human-readable string.
     :return: A string representation of the size with appropriate units.
     """
@@ -47,6 +53,10 @@ def convert_bytes(size: float) -> str:
 def convert_base(n: str, to_base: int = 10) -> str:
     """
     Convert a number from base 10 to a given base.
+
+    This function takes a string representing a number in base 10 and an optional parameter
+    for the base to convert the number to. It returns a string representation of the number
+    in the desired base.
 
     :param n: The base-10 number to convert.
     :param to_base: The base to convert the number to. Default is 10.
@@ -71,6 +81,9 @@ def time_to_seconds(time: str) -> int:
     """
     Convert a time string in the format of "Xh Ym Zs" to seconds.
 
+    This function takes a time string in the format of "Xh Ym Zs" and returns the number
+    of seconds represented by the time string.
+
     :param time: The time string to convert to seconds.
     :return: The number of seconds represented by the time string.
     """
@@ -81,10 +94,11 @@ def seconds_to_min(seconds: int) -> str:
     """
     Convert a given number of seconds to a formatted time string.
 
+    This function takes an integer representing the number of seconds and returns a
+    formatted time string in the format of "Xh Ym Zs" or "Xm Zs", depending on the number
+    of hours.
+
     :param seconds: The number of seconds to convert to a formatted time string.
     :return: A string representation of the time in the format of "Xh Ym Zs" or "Xm Zs".
     """
-    if seconds is None:
-        return ""
-    d, h, m, s = divmod(seconds, 86400), divmod(seconds, 3600), divmod(seconds, 60), seconds % 60
-    return f"{h:02d}:{m:02d}:{s:02d}" if d else f"{m:02d}:{s:02d}"
+    if seconds
