@@ -56,11 +56,10 @@ async def braodcast_message(client, message, _):
             chats.append(int(chat["chat_id"]))
         for i in chats:
             try:
-                m = (
-                    await app.forward_messages(i, y, x)
-                    if message.reply_to_message
-                    else await app.send_message(i, text=query)
-                )
+                if not message.reply_to_message:
+                    m = await app.send_message(i, text=query)
+                else:
+                    m = await app.forward_messages(i, y, x)
                 if "-pin" in message.text:
                     try:
                         await m.pin(disable_notification=True)
@@ -95,11 +94,12 @@ async def braodcast_message(client, message, _):
             served_users.append(int(user["user_id"]))
         for i in served_users:
             try:
-                m = (
-                    await app.forward_messages(i, y, x)
-                    if message.reply_to_message
-                    else await app.send_message(i, text=query)
-                )
+                if i not in served_chats:
+                    continue
+                if not message.reply_to_message:
+                    m = await app.send_message(i, text=query)
+                else:
+                    m = await app.forward_messages(i, y, x)
                 susr += 1
                 await asyncio.sleep(0.2)
             except FloodWait as fw:
@@ -108,7 +108,7 @@ async def braodcast_message(client, message, _):
                     continue
                 await asyncio.sleep(flood_time)
             except:
-                pass
+                continue
         try:
             await message.reply_text(_["broad_4"].format(susr))
         except:
@@ -121,49 +121,8 @@ async def braodcast_message(client, message, _):
 
         for num in assistants:
             sent = 0
-            client = await get_client(num)
-            async for dialog in client.get_dialogs():
-                try:
-                    await client.forward_messages(
-                        dialog.chat.id, y, x
-                    ) if message.reply_to_message else await client.send_message(
-                        dialog.chat.id, text=query
-                    )
-                    sent += 1
-                    await asyncio.sleep(3)
-                except FloodWait as fw:
-                    flood_time = int(fw.value)
-                    if flood_time > 200:
-                        continue
-                    await asyncio.sleep(flood_time)
-                except:
-                    continue
-            text += _["broad_7"].format(num, sent)
-        try:
-            await aw.edit_text(text)
-        except:
-            pass
-    IS_BROADCASTING = False
-
-
-async def auto_clean():
-    while not await asyncio.sleep(10):
-        try:
-            served_chats = await get_active_chats()
-            for chat_id in served_chats:
-                if chat_id not in adminlist:
-                    adminlist[chat_id] = []
-                    async for user in app.get_chat_members(
-                        chat_id, filter=ChatMembersFilter.ADMINISTRATORS
-                    ):
-                        if user.privileges.can_manage_video_chats:
-                            adminlist[chat_id].append(user.user.id)
-                    authusers = await get_authuser_names(chat_id)
-                    for user in authusers:
-                        user_id = await alpha_to_int(user)
-                        adminlist[chat_id].append(user_id)
-        except:
-            continue
-
-
-asyncio.create_task(auto_clean())
+            try:
+                client = await get_client(num)
+            except:
+                continue
+            async for dialog in client.get_dialog
