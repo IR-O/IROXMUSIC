@@ -28,4 +28,4 @@ from IroXMusic.core.call import Irop  # Importing Irop class from call.py
 from IroXMusic.utils import seconds_to_min  # Function to convert seconds to minutes
 from IroXMusic.utils import time_to_seconds  # Function to convert time to seconds
 from IroXMusic.utils.channelplay import get_channeplayCB  # Function to get channel play callback
-from IroXMusic.utils.decorators.language import languageCB  #
+from IroXMusic.utils.decorators.language import languageCB  # Language change decorator
