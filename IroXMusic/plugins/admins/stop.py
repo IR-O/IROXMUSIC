@@ -8,9 +8,8 @@ from IroXMusic.utils.decorators import AdminRightsCheck  # Importing AdminRights
 from IroXMusic.utils.inline import close_markup  # Importing close_markup from IroXMusic.utils.inline
 from config import BANNED_USERS  # Importing BANNED_USERS from config
 
-# @app.on_message(filters.command(["end", "stop", "cend", "cstop"]) & filters.group & ~BANNED_USERS)
 @app.on_message(filters.command(commands=["end", "stop", "cend", "cstop"]) & filters.group & ~BANNED_USERS)
-@AdminRightsCheck
+@AdminRightsCheck  # Decorator to check for admin rights
 async def stop_music(cli, message: Message, _, chat_id):  # The function to stop the music
     """
     This function is used to stop the music in the group chat.
@@ -19,7 +18,8 @@ async def stop_music(cli, message: Message, _, chat_id):  # The function to stop
     :param _: The extra arguments
     :param chat_id: The ID of the chat
     """
-    if not len(message.command) == 1:  # Checking if the user has provided any arguments
+    # Checking if the user has provided any arguments
+    if not len(message.command) == 1:
         return  # If yes, then return and do nothing
 
     # Calling the stop_stream method from Irop class and passing chat_id as an argument
@@ -27,4 +27,3 @@ async def stop_music(cli, message: Message, _, chat_id):  # The function to stop
 
     # Calling the set_loop method from database.py and passing 0 as an argument
     await set_loop(chat_id, 0)
-
