@@ -28,20 +28,28 @@ from strings import get_string
 
 links = {}
 
-
 def PlayWrapper(command: Callable[[Message, str, int, bool, Optional[str]], Coroutine[Any, Any, Any]]) -> Callable[[Message], Coroutine[Any, Any, Any]]:
+# This function takes a command as an argument and returns another function that takes a Message as an argument.
+# The returned function is a coroutine that wraps the execution of the provided command with some additional functionality.
+
     async def wrapper(client: YouTube, message: Message) -> Coroutine[Any, Any, None]:
+# This is the wrapper function that is returned by PlayWrapper. It takes a YouTube client and a Message as arguments,
+# and returns a coroutine that performs the following tasks:
+
         language = await get_lang(message.chat.id)
         _ = get_string(language)
+# Get the language for the current chat and load the string resources for that language.
 
         if message.chat.type not in ("group", "supergroup"):
             return await message.reply_text(_["general_2"])
+# If the message was not sent in a group or supergroup, reply with a message indicating that the command can only be used in such chats.
 
         if message.sender_chat:
             upl = InlineKeyboardMarkup(
                 [[InlineKeyboardButton(text="ʜᴏᴡ ᴛᴏ ғɪx ?", callback_data="AnonymousAdmin")]]
             )
             return await message.reply_text(_["general_3"], reply_markup=upl)
+# If the message was sent by an anonymous administrator, provide a way for them to learn how to fix that and reply with a message.
 
         if await is_maintenance() is False:
             if message.from_user.id not in SUDOERS:
@@ -49,11 +57,13 @@ def PlayWrapper(command: Callable[[Message, str, int, bool, Optional[str]], Coro
                     text=f"{app.mention} ɪs ᴜɴᴅᴇʀ ᴍᴀɪɴᴛᴇɴᴀɴᴄᴇ, ᴠɪsɪᴛ <a href={SUPPORT_CHAT}>sᴜᴘᴘᴏʀᴛ ᴄʜᴀᴛ</a> ғᴏʀ ᴋɴᴏᴡɪɴɢ ᴛʜᴇ ʀᴇᴀsᴏɴ.",
                     disable_web_page_preview=True,
                 )
+# If the bot is not in maintenance mode, but the user is not a sudoer, reply with a message indicating that the bot is under maintenance and providing a link to the support chat.
 
         try:
             await message.delete()
         except:
             pass
+# Try to delete the message that triggered the command, but ignore any errors that may occur.
 
         audio_telegram = message.reply_to_message.audio if message.reply_to_message else None
         video_telegram = message.reply_to_message.video if message.reply_to_message else None
@@ -68,6 +78,8 @@ def PlayWrapper(command: Callable[[Message, str, int, bool, Optional[str]], Coro
                     caption=_["play_18"],
                     reply_markup=InlineKeyboardMarkup(buttons),
                 )
+# If the message did not contain a Telegram media message or a YouTube URL, and the command was not "stream",
+# reply with a photo of the playlist and a set of inline buttons.
 
         chat_id = await get_cmode(message.chat.id) if message.command[0][0] == "c" else message.chat.id
         playmode = await get_playmode(message.chat.id)
@@ -82,6 +94,8 @@ def PlayWrapper(command: Callable[[Message, str, int, bool, Optional[str]], Coro
                 else:
                     if message.from_user.id not in admins:
                         return await message.reply_text(_["play_4"])
+# If the playtype is not "Everyone", and the user is not a sudoer, check if they are an administrator of the chat.
+# If they are not, reply with a message indicating that they do not have the necessary permissions.
 
         video = True if message.command[0][0] == "v" else None
         if "-v" in message.text:
@@ -94,23 +108,4 @@ def PlayWrapper(command: Callable[[Message, str, int, bool, Optional[str]], Coro
                 get = await app.get_chat_member(chat_id, userbot.id)
                 if (
                     get.status == ChatMemberStatus.BANNED
-                    or get.status == ChatMemberStatus.RESTRICTED
-                ):
-                    return await message.reply_text(
-                        _["call_2"].format(
-                            app.mention, userbot.id, userbot.name, userbot.username
-                        )
-                    )
-            except UserNotParticipant:
-                invitelink = await get_invite_link(chat_id, message)
-                if invitelink.startswith("https://t.me/+"):
-                    invitelink = invitelink.replace(
-                        "https://t.me/+", "https://t.me/joinchat/"
-                    )
-                myu = await message.reply_text(_["call_4"].format(app.mention))
-                try:
-                    async with aiohttp.ClientSession() as session:
-                        async with session.post(invitelink, data={"invite": "accept"}) as resp:
-                            if resp.status != 200:
-                                return await message.reply_text(_["call_3"])
-                    await
+                    or get.status == ChatMemberStatus.
