@@ -1,4 +1,4 @@
-import random
+import asyncpg
 from typing import (
     Dict,
     Final,
@@ -7,44 +7,47 @@ from typing import (
     Union,
 )
 
-import asyncpg
-from pymongo import MongoClient
-
+import random
+import pymongo
 from IroXMusic import userbot
 
-mongo_client = MongoClient()
+mongo_client = pymongo.MongoClient()
 db = mongo_client.IroXMusic
 
-authdb = db.adminauth
-authuserdb = db.authuser
-autoenddb = db.autoend
-assdb = db.assistants
-blacklist_chatdb = db.blacklistChat
-blockeddb = db.blockedusers
-chatsdb = db.chats
-channeldb = db.cplaymode
-countdb = db.upcount
-gbansdb = db.gban
-langdb = db.language
-onoffdb = db.onoffper
-playmodedb = db.playmode
-playtypedb = db.playtypedb
-skipdb = db.skipmode
-sudoersdb = db.sudoers
-usersdb = db.tgusersdb
+collections: Dict[str, pymongo.collection.Collection] = {
+    "adminauth": db.adminauth,
+    "authuser": db.authuser,
+    "autoend": db.autoend,
+    "assistants": db.assistants,
+    "blacklistChat": db.blacklistChat,
+    "blockedusers": db.blockedusers,
+    "chats": db.chats,
+    "cplaymode": db.cplaymode,
+    "upcount": db.upcount,
+    "gban": db.gban,
+    "language": db.language,
+    "onoffper": db.onoffper,
+    "playmode": db.playmode,
+    "playtypedb": db.playtypedb,
+    "skipmode": db.skipmode,
+    "sudoers": db.sudoers,
+    "tgusersdb": db.tgusersdb,
+}
 
-active: Final[list] = []
-activevideo: Final[list] = []
-assistantdict: Final[dict] = {}
-autoend: Final[dict] = {}
-count: Final[dict] = {}
-channelconnect: Final[dict] = {}
-langm: Final[dict] = {}
-loop: Final[dict] = {}
-maintenance: Final[list] = []
-nonadmin: Final[dict] = {}
-pause: Final[dict] = {}
-playmode: Final[dict] = {}
-playtype: Final[dict] = {}
-skipmode: Final[dict] = {}
-
+FinalVars = Dict[str, Union[List, Dict]]
+final_vars: FinalVars = {
+    "active": [],
+    "activevideo": [],
+    "assistantdict": {},
+    "autoend": {},
+    "count": {},
+    "channelconnect": {},
+    "langm": {},
+    "loop": {},
+    "maintenance": [],
+    "nonadmin": {},
+    "pause": {},
+    "playmode": {},
+    "playtype": {},
+    "skipmode": {},
+}
