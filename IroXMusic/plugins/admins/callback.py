@@ -1,8 +1,8 @@
 import asyncio
 import typing
-from functools import lru_cache
 
-from pyrogram import filters
+import pyrogram
+from functools import lru_cache
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
 # IroXMusic related imports
@@ -18,8 +18,7 @@ from IroXMusic.utils.thumbnails import get_thumb
 from config import BANNED_USERS, adminlist, confirmer, votemode
 from strings import get_string
 
-# Global variables
 @lru_cache()
-def get_chat_settings(chat_id):
+def get_chat_settings(chat_id: int) -> dict:
+    """Get the chat settings for the given chat ID."""
     return db[chat_id]
-
