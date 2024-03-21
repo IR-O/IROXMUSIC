@@ -13,9 +13,11 @@ from strings import get_string, languages_present  # Importing get_string and la
 
 # Function to create a keyboard for language selection
 def languages_keyboard(_):
-    keyboard = InlineKeyboard(row_width=2)  # Creating an instance of InlineKeyboard class
+    # Creating an instance of InlineKeyboard class
+    keyboard = InlineKeyboard(row_width=2)
     for i in languages_present:  # Iterating through languages_present
-        keyboard.add(InlineKeyboardButton(text=languages_present[i], callback_data=f"languages:{i}"))  # Adding a button for each language
+        # Adding a button for each language
+        keyboard.add(InlineKeyboardButton(text=languages_present[i], callback_data=f"languages:{i}"))
     keyboard.row(
         InlineKeyboardButton(text=_["BACK_BUTTON"], callback_data="settingsback_helper"),  # Adding a back button
         InlineKeyboardButton(text=_["CLOSE_BUTTON"], callback_data="close"),  # Adding a close button
@@ -53,3 +55,4 @@ async def language_markup(client, CallbackQuery, _):
         return  # Return without doing anything
     await set_lang(CallbackQuery.message.chat.id, langauge)  # Setting the new language
     await CallbackQuery.answer(_["lang_2"], show_alert=True)  # Showing a success message
+
