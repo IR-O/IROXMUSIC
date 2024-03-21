@@ -15,9 +15,14 @@ from pytgcalls.types.input_stream import AudioPiped, AudioVideoPiped
 from pytgcalls.types.input_stream.quality import HighQualityAudio, MediumQualityVideo
 from pytgcalls.types.stream import StreamAudioEnded
 
-import config
-from IroXMusic import LOGGER, YouTube, app
-from IroXMusic.misc import db
+# Initialize empty dictionaries
+# We use dictionaries to store asynchronous events and counters for each chat.
+autoend: Dict[int, asyncio.Event] = {}
+counter: Dict[int, int] = {}
+
+import config  # Import configuration settings
+from IroXMusic import LOGGER, YouTube, app  # Import necessary modules
+from IroXMusic.misc import db  # Import database-related functions
 from IroXMusic.utils.database import (
     add_active_chat,
     add_active_video_chat,
@@ -37,6 +42,5 @@ from IroXMusic.utils.stream.autoclear import auto_clean
 from IroXMusic.utils.thumbnails import get_thumb
 from strings import get_string
 
-# Initialize empty dictionaries
-autoend: Dict[int, asyncio.Event] = {}
-counter: Dict[int, int] = {}
+# Commented out debugging line
+# LOGGER.info("This is some debugging info.")
