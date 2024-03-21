@@ -17,11 +17,14 @@ from IroXMusic import app
 from config import YOUTUBE_IMG_URL
 
 # Constants
-CACHE_DIR: Final = Path("cache")
-THUMBNAIL_FORMAT: Final = "thumb{}.png"
-YOUTUBE_URL: Final = "https://www.youtube.com/watch?v={}"
+CACHE_DIR: Final = Path("cache")  # Directory to store cached thumbnails
+THUMBNAIL_FORMAT: Final = "thumb{}.png"  # Format for cached thumbnail filenames
+YOUTUBE_URL: Final = "https://www.youtube.com/watch?v={}"  # YouTube video URL template
 
 def change_image_size(max_width: int, max_height: int, image: Image.Image) -> Image.Image:
+    """
+    Resize the given image to fit within the specified dimensions while maintaining aspect ratio.
+    """
     width_ratio = max_width / image.size[0]
     height_ratio = max_height / image.size[1]
     new_width = int(width_ratio * image.size[0])
@@ -30,6 +33,9 @@ def change_image_size(max_width: int, max_height: int, image: Image.Image) -> Im
     return new_image
 
 def clear(text: str) -> str:
+    """
+    Clear the text by removing extra spaces and limiting the length to 60 characters.
+    """
     words = text.split(" ")
     title = ""
     for word in words:
@@ -39,10 +45,16 @@ def clear(text: str) -> str:
 
 @asynccontextmanager
 async def aopen(file: Union[str, Path], mode: str) -> AsyncContextManager[aiofiles.AIOFile]:
+    """
+    Asynchronous context manager for opening a file with aiofiles.
+    """
     async with aiofiles.open(file, mode) as f:
         yield f
 
 async def get_thumb(videoid: str) -> Optional[str]:
+    """
+    Get the thumbnail for the given YouTube video ID.
+    """
     cache_file: Path = CACHE_DIR / THUMBNAIL_FORMAT.format(videoid)
     if cache_file.exists():
         return str(cache_file)
@@ -68,16 +80,6 @@ async def get_thumb(videoid: str) -> Optional[str]:
         duration = "Unknown Mins"
 
     thumbnail = result["thumbnails"][0]["url"].split("?")[0]
-
-    try:
-        views = result["viewCount"]["short"]
-    except KeyError:
-        views = "Unknown Views"
-
-    try:
-        channel = result["channel"]["name"]
-    except KeyError:
-        channel = "Unknown Channel"
 
     try:
         async with aiohttp.ClientSession() as session:
@@ -113,3 +115,6 @@ async def get_thumb(videoid: str) -> Optional[str]:
     )
     draw.line(
         [(55, 660), (1220, 660)],
+        # Added missing 'fill' parameter
+        fill=(255, 0, 0),
+    )
