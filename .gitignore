@@ -1,25 +1,8 @@
-# Ignore environment variables file
+# Ignore common cache and session files
 .env
-
-# Ignore NuGet cache
 .cache
-
-# Ignore log file
 log.txt
-
-# Ignore macOS system files
-.DS_Store
-
-# Ignore Jupyter Notebook session files
 *.session
-
-# Ignore data directory
-raw_files/
-cache/
-downloads/
-
-# Ignore Python cache
-__pycache__/
-
-# Ignore GNOME session files
+.DS_Store
 *.session-journal
+
