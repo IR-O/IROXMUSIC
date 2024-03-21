@@ -86,4 +86,26 @@ async def overall_stats(client, callback_query: CallbackQuery, _):
         )
 
 # Callback query handler for the "bot_stats_sudo" regex
-@app.on_callback_
+@app.on_callback_query(filters.regex("bot_stats_sudo") & filters.user(SUDOERS) & ~BANNED_USERS)
+@languageCB
+async def sudo_stats(client, callback_query: CallbackQuery, _):
+    # Answer the callback query
+    await callback_query.answer()
+    upl = stats_buttons(_, True)
+    # Edit the message with the sudo stats text
+    await callback_query.edit_message_text(_["gstats_4"].format(app.mention))
+    text = _["gstats_5"].format(
+        app.mention,
+        pyver,
+        platform.system(),
+        platform.release(),
+        psutil.cpu_count(),
+        psutil.cpu_freq(),
+        round(psutil.virtual_memory().total / (1024.0 ** 3), 2),
+        round(psutil.disk_usage('/').total / (1024.0 ** 3), 2),
+        pytgver,
+        pyrover,
+    )
+    med = InputMediaPhoto(media=config.STATS_IMG_URL, caption=text)
+    try:
+        # Edit the message
