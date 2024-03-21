@@ -11,45 +11,33 @@ from pyrogram.errors import (
 )
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
 
-from IroXMusic import YouTube, app
-from IroXMusic.misc import SUDOERS
-from IroXMusic.utils.database import (
-    get_assistant,
-    get_cmode,
-    get_lang,
-    get_playmode,
-    get_playtype,
-    is_active_chat,
-    is_maintenance,
-)
-from IroXMusic.utils.inline import botplaylist_markup
-from config import PLAYLIST_IMG_URL, SUPPORT_CHAT, adminlist
-from strings import get_string
+import YouTube from "IroXMusic.YouTube"
+import app from "IroXMusic.app"
+import get_string from "IroXMusic.strings"
+import get_lang from "IroXMusic.misc.lang"
+import get_cmode from "IroXMusic.misc.cmode"
+import get_playmode from "IroXMusic.misc.playmode"
+import get_playtype from "IroXMusic.misc.playtype"
+import is_active_chat from "IroXMusic.misc.is_active_chat"
+import is_maintenance from "IroXMusic.misc.is_maintenance"
+import botplaylist_markup from "IroXMusic.utils.inline.botplaylist_markup"
+import PLAYLIST_IMG_URL, SUPPORT_CHAT, adminlist from "config"
 
 links = {}
 
-def PlayWrapper(command: Callable[[Message, str, int, bool, Optional[str]], Coroutine[Any, Any, Any]]) -> Callable[[Message], Coroutine[Any, Any, Any]]:
-# This function takes a command as an argument and returns another function that takes a Message as an argument.
-# The returned function is a coroutine that wraps the execution of the provided command with some additional functionality.
-
+async def PlayWrapper(command: Callable[[Message, str, int, bool, Optional[str]], Coroutine[Any, Any, Any]]) -> Callable[[Message], Coroutine[Any, Any, Any]]:
     async def wrapper(client: YouTube, message: Message) -> Coroutine[Any, Any, None]:
-# This is the wrapper function that is returned by PlayWrapper. It takes a YouTube client and a Message as arguments,
-# and returns a coroutine that performs the following tasks:
-
         language = await get_lang(message.chat.id)
         _ = get_string(language)
-# Get the language for the current chat and load the string resources for that language.
 
         if message.chat.type not in ("group", "supergroup"):
             return await message.reply_text(_["general_2"])
-# If the message was not sent in a group or supergroup, reply with a message indicating that the command can only be used in such chats.
 
         if message.sender_chat:
             upl = InlineKeyboardMarkup(
                 [[InlineKeyboardButton(text="ʜᴏᴡ ᴛᴏ ғɪx ?", callback_data="AnonymousAdmin")]]
             )
             return await message.reply_text(_["general_3"], reply_markup=upl)
-# If the message was sent by an anonymous administrator, provide a way for them to learn how to fix that and reply with a message.
 
         if await is_maintenance() is False:
             if message.from_user.id not in SUDOERS:
@@ -57,17 +45,16 @@ def PlayWrapper(command: Callable[[Message, str, int, bool, Optional[str]], Coro
                     text=f"{app.mention} ɪs ᴜɴᴅᴇʀ ᴍᴀɪɴᴛᴇɴᴀɴᴄᴇ, ᴠɪsɪᴛ <a href={SUPPORT_CHAT}>sᴜᴘᴘᴏʀᴛ ᴄʜᴀᴛ</a> ғᴏʀ ᴋɴᴏᴡɪɴɢ ᴛʜᴇ ʀᴇᴀsᴏɴ.",
                     disable_web_page_preview=True,
                 )
-# If the bot is not in maintenance mode, but the user is not a sudoer, reply with a message indicating that the bot is under maintenance and providing a link to the support chat.
 
         try:
             await message.delete()
         except:
             pass
-# Try to delete the message that triggered the command, but ignore any errors that may occur.
 
         audio_telegram = message.reply_to_message.audio if message.reply_to_message else None
         video_telegram = message.reply_to_message.video if message.reply_to_message else None
         url = await YouTube.url(message)
+
         if not (audio_telegram or video_telegram or url):
             if len(message.command) < 2:
                 if "stream" in message.command:
@@ -78,8 +65,6 @@ def PlayWrapper(command: Callable[[Message, str, int, bool, Optional[str]], Coro
                     caption=_["play_18"],
                     reply_markup=InlineKeyboardMarkup(buttons),
                 )
-# If the message did not contain a Telegram media message or a YouTube URL, and the command was not "stream",
-# reply with a photo of the playlist and a set of inline buttons.
 
         chat_id = await get_cmode(message.chat.id) if message.command[0][0] == "c" else message.chat.id
         playmode = await get_playmode(message.chat.id)
@@ -94,8 +79,6 @@ def PlayWrapper(command: Callable[[Message, str, int, bool, Optional[str]], Coro
                 else:
                     if message.from_user.id not in admins:
                         return await message.reply_text(_["play_4"])
-# If the playtype is not "Everyone", and the user is not a sudoer, check if they are an administrator of the chat.
-# If they are not, reply with a message indicating that they do not have the necessary permissions.
 
         video = True if message.command[0][0] == "v" else None
         if "-v" in message.text:
@@ -108,4 +91,3 @@ def PlayWrapper(command: Callable[[Message, str, int, bool, Optional[str]], Coro
                 get = await app.get_chat_member(chat_id, userbot.id)
                 if (
                     get.status == ChatMemberStatus.BANNED
-                    or get.status == ChatMemberStatus.
