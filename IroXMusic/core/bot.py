@@ -7,7 +7,8 @@ from ..logging import LOGGER  # Importing custom logging module
 
 class Irop(Client):
     def __init__(self):
-        LOGGER(__name__).info(f"Starting Bot...")  # Logging that the bot is starting
+        # Logging that the bot is starting
+        LOGGER(__name__).info(f"Starting Bot...")
 
         # Checking if the required configurations are set
         if not config.BOT_TOKEN:
@@ -34,6 +35,8 @@ class Irop(Client):
     async def start(self):
         try:
             await super().start()  # Starting the Client
+
+            # Getting the bot's details
             self.id = self.me.id
             self.name = self.me.first_name + " " + (self.me.last_name or "")
             self.username = self.me.username
@@ -41,6 +44,7 @@ class Irop(Client):
 
             # Sending a message to the log channel
             try:
+                # Sending a formatted message to the log channel
                 await self.send_message(
                     chat_id=config.LOGGER_ID,
                     text=f"<u><b>» {self.mention} ʙᴏᴛ sᴛᴀʀᴛᴇᴅ :</b><u>\n\nɪᴅ : <code>{self.id}</code>\nɴᴀᴍᴇ : {self.name}\nᴜsᴇʀɴᴀᴍᴇ : @{self.username}",
