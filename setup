@@ -1,13 +1,18 @@
 #!/bin/bash
 
 # has_sudo_privileges()
-# This function checks if the user has sudo privileges
+# This function checks if the user has sudo privileges by running the 'sudo -v' command.
+# The output is redirected to /dev/null to suppress any output. If the command succeeds,
+# the function returns 0, indicating that the user has sudo privileges.
 has_sudo_privileges() {
   sudo -v >/dev/null 2>&1
 }
 
 # print_with_color()
-# This function prints a message in a specified color
+# This function takes a color string and a message string as arguments and prints the
+# message in the specified color. The color is set using ANSI escape codes, and the
+# reset_color variable is used to reset the color to the default after printing the
+# message.
 print_with_color() {
   local color="$1"
   local message="$2"
@@ -26,7 +31,10 @@ print_with_color() {
 }
 
 # yes_no_prompt()
-# This function prompts the user to enter 'y' or 'n' and returns the result
+# This function prompts the user to enter 'y' or 'n' and returns the result as a boolean
+# value. The function uses the stty command to set the terminal to raw mode, which allows
+# it to read a single character without waiting for the user to press Enter. The function
+# then restores the terminal settings to their original state.
 yes_no_prompt() {
   local old_stty_cfg=$(stty -g)
   stty raw -echo
@@ -36,7 +44,9 @@ yes_no_prompt() {
 }
 
 # update_package_list()
-# This function updates the package list and upgrades the packages if an update is available
+# This function updates the package list using the 'apt update' command and checks if any
+# packages can be upgraded. If an update is available, the function prompts the user to
+# upgrade the packages automatically.
 update_package_list() {
   print_with_color "nocolor" "\nUpdating package list..."
   if sudo apt update | grep -q "can be upgraded"; then
@@ -55,7 +65,10 @@ update_package_list() {
 }
 
 # install_package()
-# This function installs a package if it is not already installed
+# This function installs a package using the 'apt install' command if it is not already
+# installed. The function checks if the package is already installed by running the
+# 'command -v' command and redirecting the output to /dev/null. If the command fails,
+# the package is installed.
 install_package() {
   local package_name="$1"
   if ! command -v "${package_name}" &>/dev/null; then
@@ -73,7 +86,8 @@ install_package() {
 }
 
 # check_ffmpeg_version()
-# This function checks the version of ffmpeg and prints a message if the version is lower than 4.0
+# This function checks the version of ffmpeg using the 'ffmpeg -version' command and
+# prints a message if the version is lower than 4.0.
 check_ffmpeg_version() {
   local ffmpeg_version=$(ffmpeg -version | grep -Po 'version \K[0-9.]*')
   if (( $(echo "${ffmpeg_version} < 4.0" | bc -l) )); then
@@ -82,7 +96,8 @@ check_ffmpeg_version() {
 }
 
 # install_nodejs_and_npm()
-# This function installs nodejs and npm if they are not already installed
+# This function installs Node.js and npm using the curl command to download the setup
+# script from nodesource.com and the apt command to install the packages.
 install_nodejs_and_npm() {
   if ! command -v npm &>/dev/null; then
     print_with_color "nocolor" "Installing Nodejs and Npm..."
@@ -94,28 +109,7 @@ install_nodejs_and_npm() {
 }
 
 # upgrade_pip_and_install_dependencies()
-# This function upgrades pip and installs the required dependencies
+# This function upgrades pip using the 'pip3 install -U pip' command and installs the
+# required dependencies using the 'pip3 install -U -r requirements.txt' command.
 upgrade_pip_and_install_dependencies() {
-  print_with_color "nocolor" "Upgrading pip and installing dependency packages..."
-  pip3 install -U pip &>>pypilog.txt
-  pip3 install -U -r requirements.txt &>>pypilog.txt
-  print_with_color "cgreen" "DONE."
-}
-
-# main()
-# This is the main function that runs the entire script
-main() {
-  if ! has_sudo_privileges; then
-    print_with_color "cred" "Error: This script needs sudo privileges to run."
-    exit 1
-  fi
-
-  update_package_list
-  install_package "ffmpeg"
-  check_ffmpeg_version
-  install_nodejs_and_npm
-  upgrade_pip_and_install_dependencies
-}
-
-# Call the main function
-main
+  print_with_color "nocolor"
