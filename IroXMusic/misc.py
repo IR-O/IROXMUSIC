@@ -8,16 +8,14 @@ import config
 from IroXMusic.core.mongo import mongodb
 
 from .logging import LOGGER
+# Importing the LOGGER from logging.py to log messages
 
 SUDOERS = filters.user()
-
-HAPP = None
 _boot_ = time.time()
 
-
 def is_heroku():
+    # Returns True if the code is running on Heroku, else False
     return "heroku" in socket.getfqdn()
-
 
 XCB = [
     "/",
@@ -35,14 +33,15 @@ XCB = [
     "main",
 ]
 
-
 def dbb():
+    # Initializes an empty dictionary 'db' and logs a message indicating that the local database has been initialized
     global db
     db = {}
     LOGGER(__name__).info(f"Local Database Initialized.")
 
 
 async def sudo():
+    # Loads the sudoers list from the MongoDB database and adds the owner ID to it if it's not already present
     global SUDOERS
     SUDOERS.add(config.OWNER_ID)
     sudoersdb = mongodb.sudoers
@@ -62,6 +61,7 @@ async def sudo():
 
 
 def heroku():
+    # Initializes the Heroku app object if the code is running on Heroku and the required configuration variables are set
     global HAPP
     if is_heroku:
         if config.HEROKU_API_KEY and config.HEROKU_APP_NAME:
@@ -70,6 +70,4 @@ def heroku():
                 HAPP = Heroku.app(config.HEROKU_APP_NAME)
                 LOGGER(__name__).info(f"Heroku App Configured")
             except BaseException:
-                LOGGER(__name__).warning(
-                    f"Please make sure your Heroku API Key and Your App name are configured correctly in the heroku."
-                )
+                LOGGER
