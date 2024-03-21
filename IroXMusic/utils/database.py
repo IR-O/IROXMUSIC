@@ -1,5 +1,7 @@
-import asyncpg
+# Importing required libraries
+import asyncpg  # Asynchronous PostgreSQL database connector
 from typing import (
+    # Importing various types from the typing module
     Dict,
     Final,
     List,
@@ -8,12 +10,16 @@ from typing import (
 )
 
 import random
-import pymongo
-from IroXMusic import userbot
+import pymongo  # PyMongo is a Python driver for MongoDB
+from IroXMusic import userbot  # Importing the userbot module from IroXMusic package
 
+# Creating a connection to MongoDB
 mongo_client = pymongo.MongoClient()
+
+# Selecting the database 'IroXMusic'
 db = mongo_client.IroXMusic
 
+# Defining a dictionary to store collections in the database
 collections: Dict[str, pymongo.collection.Collection] = {
     "adminauth": db.adminauth,
     "authuser": db.authuser,
@@ -34,6 +40,7 @@ collections: Dict[str, pymongo.collection.Collection] = {
     "tgusersdb": db.tgusersdb,
 }
 
+# Defining a dictionary with final variables
 FinalVars = Dict[str, Union[List, Dict]]
 final_vars: FinalVars = {
     "active": [],
@@ -46,8 +53,4 @@ final_vars: FinalVars = {
     "loop": {},
     "maintenance": [],
     "nonadmin": {},
-    "pause": {},
-    "playmode": {},
-    "playtype": {},
-    "skipmode": {},
-}
+
