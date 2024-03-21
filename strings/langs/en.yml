@@ -1,75 +1,28 @@
-# This class, BotMessages, contains various message templates used by the bot
-# in different situations. The messages are categorized based on their functionality
-# and can be accessed using their corresponding attribute name.
 class BotMessages:
-
-    # The name attribute is a string that represents the name of the bot.
+    # The name of the bot
     name = "🇺🇸 English"
 
-    # The general_1 attribute is a string that is used to instruct the user to reply
-    # to a user's message or give a username/user ID.
+    # General messages
     general_1 = "» REPLY TO A USER'S MESSAGE OR GIVE A USERNAME/USER ID."
-
-    # The general_2 attribute is a string that is used to inform the user that something
-    # went wrong while processing their query. It includes a placeholder {0} for the
-    # exception message.
-    general_2 = "» SOMETHING WENT WRONG WHILE PROCESSING YOUR QUERY.\n\nEXCEPTION: <code>{0}</code>"
-
-    # The general_3 attribute is a string that informs the user that they need to revert
-    # back to their user account to use the bot, as they are currently an anonymous
-    # admin in the chat.
+    general_2 = "» SOMETHING WENT WRONG WHILE PROCESSING YOUR QUERY.<br>EXCEPTION: <code>{0}</code>"
     general_3 = "YOU'RE AN ANONYMOUS ADMIN IN THIS CHAT, REVERT BACK TO USER ACCOUNT FOR USING ME."
-
-    # The general_4 attribute is a string that informs the user that they don't have
-    # permissions to manage video chats and suggests them to reload the admin cache
-    # via /reload.
-    general_4 = "» YOU DON'T HAVE PERMISSIONS TO MANAGE VIDEO CHATS.\n\nRELOAD ADMIN CACHE VIA /reload"
-
-    # The general_5 attribute is a string that informs the user that the bot isn't
-    # streaming on video chat.
+    general_4 = "» YOU DON'T HAVE PERMISSIONS TO MANAGE VIDEO CHATS.<br>RELOAD ADMIN CACHE VIA /reload"
     general_5 = "» BOT ISN'T STREAMING ON VIDEO CHAT."
 
-    # The tg_1 attribute is a string that is used to display the download progress
-    # of a file from Telegram. It includes placeholders for file size, completed,
-    # percentage, speed, and ETA.
-    tg_1 = "<u><b>{0} DOWNLOADER</b></u>\n\n<b>FILE SIZE :</b> {1}\n<b>COMPLETED :</b> {2}\n<b>PERCENTAGE :</b> {3}%\n\n<b>SPEED :</b> {4}/s\n<b>ETA :</b> {5}"
-
-    # The tg_2 attribute is a string that is used to inform the user that the file
-    # download is successful and is being processed. It includes a placeholder for
-    # the time taken.
-    tg_2 = "SUCCESSFULLY DOWNLOADED, PROCESSING FILE...\n\n<b>TIME TAKEN :</b> {0}"
-
-    # The tg_3 attribute is a string that informs the user that the file download
-    # from Telegram has failed and suggests them to try again.
+    # Telegram-related messages
+    tg_1 = "<u><b>{0} DOWNLOADER</b></u><br><b>FILE SIZE :</b> {1}<br><b>COMPLETED :</b> {2}<br><b>PERCENTAGE :</b> {3}%<br><b>SPEED :</b> {4}/s<br><b>ETA :</b> {5}"
+    tg_2 = "SUCCESSFULLY DOWNLOADED, PROCESSING FILE...<br><b>TIME TAKEN :</b> {0}"
     tg_3 = "FAILED TO DOWNLOAD MEDIA FROM TELEGRAM, PLEASE TRY AGAIN..."
-
-    # The tg_4 attribute is a string that informs the user that the download is
-    # already completed.
     tg_4 = "» DOWNLOAD ALREADY COMPLETED."
-
-    # The tg_5 attribute is a string that informs the user that the download is
-    # already completed or cancelled.
     tg_5 = "» DOWNLOAD ALREADY COMPLETED OR CANCELLED."
-
-    # The tg_6 attribute is a string that informs the user that the download is
-    # cancelled.
     tg_6 = "» DOWNLOAD CANCELLED."
-
-    # The tg_7 attribute is a string that informs the user that the download is
-    # cancelled by a specific user. It includes a placeholder for the username.
     tg_7 = "» DOWNLOAD CANCELLED BY : {0}"
-
-    # The tg_8 attribute is a string that informs the user that the download
-    # couldn't be stopped.
     tg_8 = "FAILED TO STOP THE DOWNLOAD."
-
-    # The tg_9 attribute is a string that informs the user that the ongoing download
-    # task couldn't be fetched.
     tg_9 = "FAILED TO GET THE ONGOING DOWNLOAD TASK..."
 
-    # The call_1 attribute is a string that informs the user that the bot requires
-    # the 'invite users via link' permission to invite the assistant to their chat.
+    # Call-related messages
     call_1 = "» BOT REQUIRES <b>INVITE USERS VIA LINK</b> PERMISSION TO INVITE ASSISTANT TO YOUR CHAT."
+    call_2 = "» THE ASSISTANT IS CURRENTLY IN ANOTHER CALL."
 
-    # The call_2 attribute is a string that informs the user that the assistant is
-
+# Example usage
+print(BotMessages.general_1)
