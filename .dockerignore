@@ -1,4 +1,4 @@
-# Ignore common version control files
+# Ignore version control files
 .git/
 .svn/
 .hg/
@@ -7,15 +7,52 @@
 .env
 
 # Ignore NuGet cache directory
-.cache/
+.nuget/packages/
 
 # Ignore log file
 log.txt
 
 # Ignore macOS system file
-.DS_Store
+*.DS_Store
 
 # Ignore VS Code session files
-*.session
-*.session-journal
+.vscode/
 
+# Ignore editor and IDE specific files
+*.suo
+*.user
+*.sln.docstates
+
+# Ignore build and output directories
+bin/
+obj/
+
+# Ignore package manager directories
+packages/
+
+# Ignore dependency directories
+node_modules/
+bower_components/
+
+# Ignore build artifacts
+*.dll
+*.pdb
+*.exe
+*.dmg
+*.iso
+*.deb
+*.rpm
+*.msi
+*.deb
+*.tar.gz
+*.zip
+*.7z
+
+# Ignore text editor backup files
+*.~
+*.bak
+*.swp
+*.old
+
+# Ignore thumbs.db files
+thumbs.db
