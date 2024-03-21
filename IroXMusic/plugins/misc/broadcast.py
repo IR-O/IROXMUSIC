@@ -1,25 +1,20 @@
 import asyncio
-from pyrogram import filters, Client as PyrogramClient
+from pyrogram import filters, Client as PyrogramClient  # Importing necessary modules and classes
 from pyrogram.enums import ChatMembersFilter
 from pyrogram.errors import FloodWait
 from typing import List
 
-import IroXMusic.misc import SUDOERS, LOVE
-from IroXMusic.utils.database import (
-    get_active_chats,
-    get_authuser_names,
-    get_client,
-    get_served_chats,
-    get_served_users,
-)
+import IroXMusic.misc  # Importing custom modules
+import IroXMusic.utils.database
 from IroXMusic.utils.decorators.language import language
 from IroXMusic.utils.formatters import alpha_to_int
 from config import adminlist
 
+# Global variable to keep track of broadcasting status
 IS_BROADCASTING = False
 
 
-@app.on_message(filters.command("broadcast") & SUDOERS & LOVE)
+@app.on_message(filters.command("broadcast") & SUDOERS & LOVE)  # Event decorator for the /broadcast command
 @language
 async def braodcast_message(client, message, _):
     global IS_BROADCASTING
@@ -49,6 +44,7 @@ async def braodcast_message(client, message, _):
 
 
 def _parse_query(query: str) -> str:
+    # Parsing and cleaning the query string
     query = query.replace("-pin", "").replace("-nobot", "").replace("-pinloud", "")
     query = query.replace("-assistant", "").replace("-user", "")
     if not query:
@@ -128,4 +124,3 @@ async def _broadcast_to_assistants(
             except:
                 sent.append(False)
     return sent
-
