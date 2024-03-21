@@ -1,13 +1,13 @@
 # Import necessary modules
-from pyrogram import filters, Message
-from pyrogram.types import InlineKeyboardMarkup
-from config import BANNED_USERS
-from IroXMusic.core.call import Irop
-from IroXMusic.utils.database import get_loop
-from IroXMusic.utils.decorators import AdminRightsCheck
-from IroXMusic.utils.inline import close_markup
-from IroXMusic.utils.stream.autoclear import auto_clean
-from IroXMusic.utils.thumbnails import get_thumb
+# pyrogram: A Python library for the Telegram API
+# filters, Message, InlineKeyboardMarkup: Classes from pyrogram for handling messages and inline keyboards
+# BANNED_USERS: A list of banned users from the config file
+# IroXMusic.core.call: A module for handling calls
+# db: A database object
+# AdminRightsCheck: A decorator for checking if the user is an admin
+# close_markup: A function for creating a close button for inline keyboards
+# auto_clean: A function for automatically cleaning up files
+# get_thumb: A function for getting thumbnails
 
 # Define the skip function
 @app.on_message(filters.command(["skip", "cskip", "next", "cnext"]) & filters.group & ~BANNED_USERS)
