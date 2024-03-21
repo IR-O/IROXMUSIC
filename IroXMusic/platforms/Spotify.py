@@ -3,7 +3,7 @@ import typing
 import asyncio
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
-from youtubesearchpython import VideosSearch
+from youtubesearchpython import VideosSearch, YoutubeError
 import config
 
 
@@ -133,10 +133,13 @@ class SpotifyAPI:
         Search for YouTube videos using the youtubesearchpython library and return
         a list of results.
         """
-        vs = VideosSearch(query, limit=5)
-        tasks = [self.fetch_youtube_result(vs, i) for i in range(5)]
-        results = await asyncio.gather(*tasks)
-        return [result for result in results if result]
+        try:
+            vs = VideosSearch(query, limit=5)
+            tasks = [self.fetch_youtube_result(vs, i) for i in range(5)]
+            results = await asyncio.gather(*tasks)
+            return [result for result in results if result]
+        except YoutubeError as e:
+            raise ValueError(f"Error searching YouTube: {e}")
 
     def fetch_youtube_result(self, vs, index):
         """
@@ -144,8 +147,4 @@ class SpotifyAPI:
         the result details.
         """
         try:
-            result = vs.result["result"][index]
-            return {
-                "title": result["title"],
-                "link": result["link"],
-                "vidid": result["
+           
