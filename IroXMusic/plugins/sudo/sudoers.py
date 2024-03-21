@@ -1,20 +1,27 @@
 # Importing required modules
-from typing import List, Optional
+from typing import List, Optional  # For using optional types and list types
 
-from pyrogram import filters
-from pyrogram.errors import UserNotFound
-from pyrogram.types import Message, User
-from pyrogram.utils import get_size
+import asyncio  # For handling asynchronous tasks
+import os  # For interacting with the operating system
+import re  # For working with regular expressions
+import sys  # For interacting with the Python runtime environment
+
+import pyrogram  # A Python API for Telegram
+from pyrogram import filters  # For filtering incoming messages
+from pyrogram.errors import UserNotFound  # For handling errors related to Telegram users
+from pyrogram.types import Message, User  # For handling messages and users
+from pyrogram.utils import get_size  # For getting the size of an object
 
 # Importing custom modules
-from IroXMusic import app, LOVE
-from IroXMusic.misc import SUDOERS
-from IroXMusic.utils.database import add_sudo, remove_sudo
-from IroXMusic.utils.decorators.language import language
-from IroXMusic.utils.extraction import extract_user
-from IroXMusic.utils.inline import close_markup
-from config import BANNED_USERS, OWNER_ID
+import IroXMusic  # The main application module
+from IroXMusic.misc import SUDOERS  # A set for storing the IDs of sudoers
+from IroXMusic.utils.database import add_sudo, remove_sudo  # Functions for adding and removing sudoers from the database
+from IroXMusic.utils.decorators.language import language  # A decorator for handling translations
+from IroXMusic.utils.extraction import extract_user  # A function for extracting a user from a message
+from IroXMusic.utils.inline import close_markup  # A function for creating inline buttons
+from config import BANNED_USERS, OWNER_ID  # Configuration variables
 
+# Command handlers for adding and removing sudoers
 @app.on_message(filters.command(["addsudo"]) & filters.user(OWNER_ID | LOVE))
 @language
 async def useradd(client, message: Message, _):
@@ -59,6 +66,7 @@ async def userdel(client, message: Message, _):
         await message.reply_text(_["sudo_8"])
 
 
+# Command handler for displaying the list of sudoers
 @app.on_message(filters.command(["sudolist", "listsudo", "sudoers"]) & ~BANNED_USERS)
 @language
 async def sudoers_list(client, message: Message, _):
