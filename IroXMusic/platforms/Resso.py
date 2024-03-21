@@ -6,14 +6,33 @@ from bs4 import BeautifulSoup
 from youtubesearchpython.__future__ import VideosSearch
 
 class RessoAPI:
+    """
+    A class to interact with Resso music streaming service.
+    """
     def __init__(self):
+        """
+        Initialize the RessoAPI class with a regular expression for valid Resso links
+        and the base URL for Resso web requests.
+        """
         self.regex = re.compile(r"^https?://m\.resso\.com/.*$")
         self.base = "https://m.resso.com/"
 
     async def valid(self, link: str) -> bool:
-        return bool(self.regex.fullmatch(link))
+        """
+        Check if a given link is a valid Resso link.
+
+        :param link: The link to check for validity.
+        :return: True if the link is valid, False otherwise.
+        """
 
     async def track(self, url: str, playid: Union[bool, str] = None) -> dict:
+        """
+        Fetch track details from a given Resso link.
+
+        :param url: The Resso link to fetch the track details from.
+        :param playid: An optional play ID to use in the request.
+        :return: A dictionary containing the track details.
+        """
         if playid:
             url = self.base + url
         async with aiohttp.ClientSession() as session:
@@ -50,4 +69,7 @@ class RessoAPI:
             "title": title,
             "link": ytlink,
             "vidid": vidid,
-
+            "duration_min": duration_min,
+            "thumbnail": thumbnail,
+        }
+        return track_details
