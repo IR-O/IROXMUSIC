@@ -28,11 +28,8 @@ class TeleAPI:
         """
         n = self.chars_limit
         out = [(string[i : i + n]) for i in range(0, len(string), n)]
-        j = 0
         for x in out:
-            if j <= 2:  # Send up to 3 messages at a time
-                j += 1
-                await message.reply_text(x, disable_web_page_preview=True)
+            await message.reply_text(x, disable_web_page_preview=True)
         return True
 
     async def get_link(self, message):
@@ -103,24 +100,24 @@ class TeleAPI:
         if audio:
             try:
                 file_name = (
-                    audio.file_unique_id
+                    filex.file_unique_id
                     + "."
                     + (
-                        (audio.file_name.split(".")[-1])
-                        if (not isinstance(audio, Voice))
+                        (filex.file_name.split(".")[-1])
+                        if (not isinstance(filex, Voice))
                         else "ogg"
                     )
                 )
             except:
-                file_name = audio.file_unique_id + "." + "ogg"
+                file_name = filex.file_unique_id + "." + "ogg"
             file_name = os.path.join(os.path.realpath("downloads"), file_name)
         if video:
             try:
                 file_name = (
-                    video.file_unique_id + "." + (video.file_name.split(".")[-1])
+                    filex.file_unique_id + "." + (filex.file_name.split(".")[-1])
                 )
             except:
-                file_name = video.file_unique_id + "." + "mp4"
+                file_name = filex.file_unique_id + "." + "mp4"
             file_name = os.path.join(os.path.realpath("downloads"), file_name)
         return file_name
 
@@ -140,8 +137,10 @@ class TeleAPI:
         if os.path.exists(fname):
             return True
 
-        async def down_load():
-            async def progress(current, total):
-                if current == total:
-                    return
-                current_time = time.
+        async def progress(current, total):
+            if current == total:
+                return
+            nonlocal speed_counter
+            current_time = time.time()
+            if current_time - speed_counter.get('time', 0) > 1:
+                speed
