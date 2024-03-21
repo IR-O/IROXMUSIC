@@ -1,16 +1,23 @@
-# General messages dictionary (GENERAL_MESSAGES)
-# This dictionary contains pre-defined messages for general use in the application.
-# Each message is assigned a unique ID, which can be used to retrieve the message.
-# The messages are designed to be concise and informative, providing users with
-# clear and helpful feedback.
+# Pre-defined messages for general use in the application
+GENERAL_MESSAGES = {
+    1000: "This is a general message indicating success.",
+    1001: "This is a general message indicating an error.",
+    1002: "This is a general message providing help or assistance."
+}
 
-# Telegram downloader messages dictionary (TG_DOWNLOADER_MESSAGES)
-# This dictionary contains pre-defined messages specifically for the Telegram downloader.
-# The messages provide users with information about the download progress, completion,
-# and any errors that may occur during the download process.
+# Pre-defined messages specifically for the Telegram downloader
+TG_DOWNLOADER_MESSAGES = {
+    2000: "Download process started.",
+    2001: "Downloading file {file_name}...",
+    2002: "File {file_name} downloaded successfully.",
+    2003: "An error occurred while downloading file {file_name}: {error_message}",
+    2004: "Download process completed."
+}
 
-# Call management messages dictionary (CALL_MANAGEMENT_MESSAGES)
-# This dictionary contains pre-defined messages related to call management.
-# The messages provide users with information about the call management process,
-# including inviting the assistant to a chat, banning the assistant, and any errors
-# that may occur during these processes.
+# Pre-defined messages related to call management
+CALL_MANAGEMENT_MESSAGES = {
+    3000: "Assistant has been invited to the chat.",
+    3001: "An error occurred while inviting the assistant: {error_message}",
+    3002: "Assistant has been banned from the chat.",
+    3003: "An error occurred while banning the assistant: {error_message}"
+}
