@@ -22,7 +22,7 @@ class SpotifyAPI:
         self.client_secret = config.SPOTIFY_CLIENT_SECRET  # Spotify API client secret
         self.scope = "playlist-read-private user-library-read"  # Spotify API scope
         self.redirect_uri = "http://localhost:8888/callback"  # Spotify API redirect URI
-        self.sp = spotipy.Spotify(auth_manager=self.get_auth_manager())
+        self.sp = None
 
     def get_auth_manager(self):
         """
@@ -40,6 +40,12 @@ class SpotifyAPI:
         else:
             raise ValueError("Missing Spotify API credentials")
 
+    async def authenticate(self):
+        """
+        Authenticate the Spotify API client and set the self.sp attribute.
+        """
+        self.sp = spotipy.Spotify(auth_manager=self.get_auth_manager())
+
     async def valid(self, link: str) -> bool:
         """
         Return True if the given link matches the Spotify track URL pattern, otherwise
@@ -53,6 +59,7 @@ class SpotifyAPI:
         YouTube video. Return a tuple containing the track details and YouTube video
         ID if found, otherwise raise a ValueError.
         """
+        await self.authenticate()
         if not self.regex.match(link):
             raise ValueError("Invalid Spotify track link")
         track = self.sp.track(link)
@@ -74,6 +81,7 @@ class SpotifyAPI:
         Fetch playlist details from the Spotify API and return a tuple containing
         the list of track names and the playlist ID.
         """
+        await self.authenticate()
         if not self.regex.match(url):
             raise ValueError("Invalid Spotify playlist link")
         playlist = self.sp.playlist(url)
@@ -88,6 +96,7 @@ class SpotifyAPI:
         Fetch album details from the Spotify API and return a tuple containing
         the list of track names and the album ID.
         """
+        await self.authenticate()
         if not self.regex.match(url):
             raise ValueError("Invalid Spotify album link")
         album = self.sp.album(url)
@@ -102,6 +111,7 @@ class SpotifyAPI:
         Fetch artist details from the Spotify API and return a tuple containing
         the list of top tracks and the artist ID.
         """
+        await self.authenticate()
         if not self.regex.match(url):
             raise ValueError("Invalid Spotify artist link")
         artistinfo = self.sp.artist(url)
@@ -133,13 +143,4 @@ class SpotifyAPI:
                 "title": result["title"],
                 "link": result["link"],
                 "vidid": result["id"],
-                "duration_min": int(result["duration"][:-1]) // 60,
-                "thumb": result["thumbnails"][0]["url"].split("?")[0],
-            }
-        except IndexError:
-            return None
-
-    @staticmethod
-    def get_artist_names(artists):
-        """
-        Return a string containing
+                "duration_min":
