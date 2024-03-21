@@ -37,6 +37,6 @@ from IroXMusic.utils.stream.autoclear import auto_clean
 from IroXMusic.utils.thumbnails import get_thumb
 from strings import get_string
 
-autoend = {}
-counter = {}
-
+# Initialize empty dictionaries
+autoend: Dict[int, asyncio.Event] = {}
+counter: Dict[int, int] = {}
