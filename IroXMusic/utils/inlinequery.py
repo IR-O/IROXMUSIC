@@ -1,6 +1,14 @@
-from pyrogram.types import InlineQueryResultArticle, InputTextMessageContent
-
 actions = [
     ("Pᴀᴜsᴇ", "/pause"),
-    ("Rᴇsᴜᴍᴇ", "/resume"),
+    ("Rᴇsᴜ�M résumé", "/resume"),
+]
 
+
+# Define a list of actions and corresponding command strings
+actions = [
+    # Action name: Pause
+    ("PᴀᴜSᴇ", "/pause"),
+
+    # Action name: Resume
+    ("Rᴇsᴜᴍᴇ", "/resume"),
+]
