@@ -2,7 +2,7 @@ from IroXMusic import app
 from IroXMusic.utils.database import get_cmode
 import logging
 
-async def get_channel_playCB(_, command: str, CallbackQuery) -> tuple[str | None, str | None]:
+async def get_channel_playCB(command: str, CallbackQuery) -> tuple[str | None, str | None]:
     """
     This function gets the chat ID and channel title for the given CallbackQuery.
 
@@ -10,7 +10,6 @@ async def get_channel_playCB(_, command: str, CallbackQuery) -> tuple[str | None
     If the command is not "c", it gets the chat ID from the CallbackQuery and sets the channel title to None.
 
     Args:
-        _: The first parameter is a leading underscore, which is often used in Python to indicate that a parameter is not used in the function definition.
         command (str): The command to be processed.
         CallbackQuery: An instance of the CallbackQuery class, which contains information about the callback query.
 
@@ -27,8 +26,9 @@ async def get_channel_playCB(_, command: str, CallbackQuery) -> tuple[str | None
         if chat_id is None:
             # If the chat ID is None, show an alert with the text from the "setting_7" key and return.
             try:
-                if _["setting_7"] is not None:
-                    await CallbackQuery.answer(_["setting_7"], show_alert=True)
+                if CallbackQuery.data == "c":  # Check if CallbackQuery.data is "c"
+                    if "setting_7" in _ and _["setting_7"] is not None:
+                        await CallbackQuery.answer(_["setting_7"], show_alert=True)
             except Exception as e:
                 logging.error(f"Error while answering callback query: {e}")
             return
@@ -44,3 +44,6 @@ async def get_channel_playCB(_, command: str, CallbackQuery) -> tuple[str | None
             logging.error(f"Error while getting chat: {e}")
     
     elif CallbackQuery is not None:
+        chat_id = CallbackQuery.message.chat.id
+
+    return chat_id, channel
