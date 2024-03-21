@@ -1,7 +1,8 @@
 from IroXMusic import app
 from IroXMusic.utils.database import get_cmode
+import logging
 
-async def get_channel_playCB(_, command: str, CallbackQuery) -> tuple[str, str | None]:
+async def get_channel_playCB(_, command: str, CallbackQuery) -> tuple[str | None, str | None]:
     """Get the chat ID and channel title for the given CallbackQuery.
 
     If the command is "c", get the chat ID from the database and the channel title from the chat.
@@ -19,12 +20,18 @@ async def get_channel_playCB(_, command: str, CallbackQuery) -> tuple[str, str |
             try:
                 if _["setting_7"] is not None:
                     await CallbackQuery.answer(_["setting_7"], show_alert=True)
-            except:
-                pass
+            except Exception as e:
+                logging.error(f"Error while answering callback query: {e}")
             return
 
         try:
             chat = await app.get_chat(chat_id)
             if chat is not None and chat.title is not None:
                 channel = chat.title
-        except
+        except Exception as e:
+            logging.error(f"Error while getting chat: {e}")
+    
+    elif CallbackQuery is not None:
+        chat_id = CallbackQuery.message.chat.id
+
+    return chat_id, channel
