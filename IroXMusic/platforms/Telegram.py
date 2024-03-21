@@ -8,31 +8,48 @@ from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Voice
 import config
 from IroXMusic import app
 from IroXMusic.utils.formatters import (
-    check_duration,
-    convert_bytes,
-    get_readable_time,
-    seconds_to_min,
+    check_duration,  # Function to check duration of a video/audio file
+    convert_bytes,  # Function to convert bytes to a human-readable format
+    get_readable_time,  # Function to convert seconds to a readable time format
+    seconds_to_min,  # Function to convert seconds to minutes
 )
 
 class TeleAPI:
     def __init__(self):
-        self.chars_limit = 4096
-        self.sleep = 5
+        self.chars_limit = 4096  # Maximum characters allowed in a single message
+        self.sleep = 5  # Sleep time in seconds
 
     async def send_split_text(self, message, string):
+        """
+        Sends a text message split into multiple parts if it exceeds the character limit.
+        :param message: The Pyrogram Message object
+        :param string: The text string to be sent
+        :return: True upon successful completion
+        """
         n = self.chars_limit
         out = [(string[i : i + n]) for i in range(0, len(string), n)]
         j = 0
         for x in out:
-            if j <= 2:
+            if j <= 2:  # Send up to 3 messages at a time
                 j += 1
                 await message.reply_text(x, disable_web_page_preview=True)
         return True
 
     async def get_link(self, message):
+        """
+        Returns the message link.
+        :param message: The Pyrogram Message object
+        :return: The message link as a string
+        """
         return message.link
 
     async def get_filename(self, file, audio: Union[bool, str] = None):
+        """
+        Returns the file name with the appropriate extension.
+        :param file: The Pyrogram File object
+        :param audio: Optional parameter to specify if the file is an audio file
+        :return: The file name as a string
+        """
         try:
             file_name = file.file_name
             if file_name is None:
@@ -42,6 +59,11 @@ class TeleAPI:
         return file_name
 
     async def get_duration(self, file):
+        """
+        Returns the duration of the file in minutes.
+        :param file: The Pyrogram File object
+        :return: The duration as a string
+        """
         try:
             dur = seconds_to_min(file.duration)
         except:
@@ -49,6 +71,12 @@ class TeleAPI:
         return dur
 
     async def get_duration(self, filex, file_path):
+        """
+        Returns the duration of the file in minutes.
+        :param filex: The Pyrogram File object or Voice object
+        :param file_path: The file path as a string
+        :return: The duration as a string
+        """
         try:
             dur = seconds_to_min(filex.duration)
         except:
@@ -66,6 +94,12 @@ class TeleAPI:
         audio: Union[bool, str] = None,
         video: Union[bool, str] = None,
     ):
+        """
+        Returns the file path with the appropriate file name.
+        :param audio: Optional parameter to specify if the file is an audio file
+        :param video: Optional parameter to specify if the file is a video file
+        :return: The file path as a string
+        """
         if audio:
             try:
                 file_name = (
@@ -91,6 +125,14 @@ class TeleAPI:
         return file_name
 
     async def download(self, _, message, mystic, fname):
+        """
+        Downloads a file and updates the progress.
+        :param _: Ignored parameter
+        :param message: The Pyrogram Message object
+        :param mystic: The Pyrogram Chat object
+        :param fname: The file name as a string
+        :return: None
+        """
         lower = [0, 8, 17, 38, 64, 77, 96]
         higher = [5, 10, 20, 40, 66, 80, 99]
         checker = [5, 10, 20, 40, 66, 80, 99]
@@ -102,50 +144,4 @@ class TeleAPI:
             async def progress(current, total):
                 if current == total:
                     return
-                current_time = time.time()
-                start_time = speed_counter.get(message.id)
-                check_time = current_time - start_time
-                upl = InlineKeyboardMarkup(
-                    [
-                        [
-                            InlineKeyboardButton(
-                                text="ᴄᴀɴᴄᴇʟ",
-                                callback_data="stop_downloading",
-                            ),
-                        ]
-                    ]
-                )
-                percentage = current * 100 / total
-                percentage = str(round(percentage, 2))
-                speed = current / check_time
-                eta = int((total - current) / speed)
-                eta = get_readable_time(eta)
-                if not eta:
-                    eta = "0 sᴇᴄᴏɴᴅs"
-                total_size = convert_bytes(total)
-                completed_size = convert_bytes(current)
-                speed = convert_bytes(speed)
-                percentage = int((percentage.split("."))[0])
-                for counter in range(7):
-                    low = int(lower[counter])
-                    high = int(higher[counter])
-                    check = int(checker[counter])
-                    if low < percentage <= high:
-                        if high == check:
-                            try:
-                                await mystic.edit_text(
-                                    text=_["tg_1"].format(
-                                        app.mention,
-                                        total_size,
-                                        completed_size,
-                                        percentage[:5],
-                                        speed,
-                                        eta,
-                                    ),
-                                    reply_markup=upl,
-                                )
-                                checker[counter] = 100
-                            except:
-                                pass
-
-            speed_counter[message.
+                current_time = time.
