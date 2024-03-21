@@ -33,10 +33,10 @@ async def main() -> None:
     ]
 
     async with aiohttp.ClientSession() as session:
-        tasks = [fetch(session, url) for url in urls]  # Create a list of coroutines.
-        responses = await asyncio.gather(*tasks)  # Run all the coroutines concurrently.
+        tasks = [asyncio.create_task(fetch(session, url)) for url in urls]  # Create a list of tasks.
+        responses = await asyncio.gather(*tasks, return_exceptions=True)  # Run all the tasks concurrently.
         for response in responses:
-            if response is not None:
+            if not isinstance(response, Exception):
                 print(response[:100] + "...")
 
 if __name__ == "__main__":
