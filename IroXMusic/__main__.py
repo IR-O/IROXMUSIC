@@ -1,17 +1,16 @@
-import asyncio
+#!/usr/bin/env python3
+
+import argparse
 import importlib
 import sys
+from pathlib import Path
 
-current_directory = os.path.dirname(os.path.abspath(__file__))
-# Get the current directory where this script is located
+SCRIPT_DIR = Path(__file__).parent
+PARENT_DIR = SCRIPT_DIR.parent
 
-parent_directory = os.path.abspath(os.path.join(current_directory, ".."))
-# Join the current directory and ".." to move one level up to the parent directory
+sys.path.insert(0, str(PARENT_DIR))
 
-sys.path.insert(0, parent_directory)
-# Insert the parent directory into the list of paths where Python looks for modules
-
-def import_module(module_name):
+def import_module(module_name: str) -> object:
     """
     Import a module with a given name. If the module is not found, print an error message and exit the program.
     """
@@ -21,13 +20,22 @@ def import_module(module_name):
         print(f"Error: {e}. Check the module name and try again.")
         sys.exit(1)
 
-def run_main():
+def run_main(module: object) -> None:
     """
-    Import the "main" module and run its "main" function.
+    Run the "main" function of a given module.
     """
-    main_module = import_module("main")
-    main_module.main()
+    if hasattr(module, "main") and callable(module.main):
+        module.main()
+    else:
+        print(f"Error: The 'main' module does not have a 'main' function or it is not callable.")
+        sys.exit(1)
 
 if __name__ == "__main__":
-    # This block is executed only if the script is run directly, not imported as a module.
-    run_main()
+    parser = argparse.ArgumentParser(description="Run the main function of a given module.")
+    parser.add_argument("module", help="The name of the module to import and run.")
+    args = parser.parse_args()
+
+    if str(PARENT_DIR) == str(Path.cwd()):
+        run_main(import_module(args.module))
+    else:
+        print
