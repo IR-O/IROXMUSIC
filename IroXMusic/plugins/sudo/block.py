@@ -6,8 +6,8 @@ from IroXMusic.misc import SUDOERS
 from IroXMusic.utils.database import add_gban_user, remove_gban_user
 from IroXMusic.utils.decorators.language import language
 from IroXMusic.utils.extraction import extract_user
-from config import BANNED_USERS
 
+BANNED_USERS = set()
 
 @app.on_message(filters.command(["block"]) & SUDOERS)
 @language
@@ -45,7 +45,6 @@ async def userdel(client, message: Message, _):
     BANNED_USERS.remove(user.id)
     await message.reply_text(_["block_4"].format(user.mention))
 
-
 @app.on_message(filters.command(["blocked", "blockedusers", "blusers"]) & SUDOERS)
 @language
 async def sudoers_list(client, message: Message, _):
@@ -61,5 +60,6 @@ async def sudoers_list(client, message: Message, _):
                 continue
             user = user.first_name if not user.mention else user.mention
             count += 1
+            await mystic.edit_text(msg.format(count, user))
         except:
-
+            continue
