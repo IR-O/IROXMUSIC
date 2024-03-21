@@ -1,11 +1,16 @@
+# This line prints the string "Hello, World!" to the console.
 print("Hello, World!")
 
 
-# This program prints a greeting message
-
+# This is a docstring for the main function. It provides a brief description of what the function does.
 def main():
     """Prints a greeting message to the console"""
+    # This line prints the string "Hello, World!" to the console.
     print("Hello, World!")
 
+
+# This if-statement checks if the script is being run directly or imported as a module.
+# If the script is being run directly, it calls the main function.
 if __name__ == "__main__":
+    # This line calls the main function.
     main()
