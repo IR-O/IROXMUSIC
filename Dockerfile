@@ -7,12 +7,6 @@ RUN apt-get update \
 
 COPY . /app/
 WORKDIR /app/
-RUN pip3 install --no-cache-dir -U -r requirements.txt
-
-FROM nikolaik/python-nodejs:python3.10-nodejs19
-
-COPY --from=builder /app /app
-WORKDIR /app/
-
-CMD ["bash", "start"]
+RUN pip3 install --no-cache-dir -U -r requirements.txt \
+    && rm -rf /tmp/* \
 
