@@ -1,4 +1,4 @@
-FROM nikolaik/python-nodejs:python3.10-nodejs19
+FROM nikolaik/python-nodejs:python3.10-nodejs19 as builder
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends ffmpeg \
@@ -9,4 +9,10 @@ COPY . /app/
 WORKDIR /app/
 RUN pip3 install --no-cache-dir -U -r requirements.txt
 
-CMD bash start
+FROM nikolaik/python-nodejs:python3.10-nodejs19
+
+COPY --from=builder /app /app
+WORKDIR /app/
+
+CMD ["bash", "start"]
+
