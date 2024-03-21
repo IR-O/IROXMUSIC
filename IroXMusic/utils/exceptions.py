@@ -4,3 +4,15 @@
 class AssistantErr(Exception):
     def __init__(self, error: str):
         super().__init__(f'AssistantErr: {error}')
+
+
+def raise_assistant_err(error_message: str):
+    """Raise a custom AssistantErr with a given error message."""
+    raise AssistantErr(f"An error occurred in the assistant: {error_message}")
+
+
+# Example usage:
+try:
+    raise_assistant_err("This is a custom error for the assistant.")
+except AssistantErr as e:
+    print(e)
