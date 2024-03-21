@@ -1,1 +1,11 @@
-python-3.11.4
+print("Hello, World!")
+
+
+# This program prints a greeting message
+
+def main():
+    """Prints a greeting message to the console"""
+    print("Hello, World!")
+
+if __name__ == "__main__":
+    main()
