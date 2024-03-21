@@ -1,10 +1,21 @@
+# Ignore environment variables file
 .env
+
+# Ignore NuGet cache directory
 .cache
+
+# Ignore log file
 log.txt
+
+# Ignore macOS system file
 .DS_Store
+
+# Ignore VS Code session files
 *.session
+*.session-journal
+
+# Ignore directories
 raw_files/
 cache/
 downloads/
 __pycache__/
-*.session-journal
