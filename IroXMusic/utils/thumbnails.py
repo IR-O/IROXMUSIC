@@ -1,9 +1,9 @@
 import os
 import re
 import sys
-
 import aiofiles
 import aiohttp
+import asyncio
 from PIL import Image, ImageDraw, ImageEnhance, ImageFilter, ImageFont
 from unidecode import unidecode
 from youtubesearchpython.__future__ import VideosSearch
@@ -115,6 +115,7 @@ async def get_thumb(videoid: str) -> Optional[str]:
     )
     draw.line(
         [(55, 660), (1220, 660)],
-        # Added missing 'fill' parameter
         fill=(255, 0, 0),
     )
+
+    return str(cache_file)
