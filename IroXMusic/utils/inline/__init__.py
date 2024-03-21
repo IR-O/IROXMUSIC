@@ -4,16 +4,22 @@
 # The second import statement uses the "import module as alias" syntax, which imports the module
 # and gives it a shorter name (alias) to make it easier to refer to.
 
-from . import extras, help, play, queue, settings, speed, start
+from extras import *
+from help import *
+from play import *
+from queue import *
+from settings import *
+from speed import *
+import start
 
 # If you prefer to use the original names for the modules, you can use the second import style.
 # This can be helpful if the original module names are more descriptive or if there are naming conflicts
 # with other modules in your project.
 
-import .extras as extras
-import .help as help
-import .play as play
-import .queue as queue
-import .settings as settings
-import .speed as speed
-import .start as start
+# import extras as extras
+# import help as help
+# import play as play
+# import queue as queue
+# import settings as settings
+# import speed as speed
+# import start as start
