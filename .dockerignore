@@ -1,8 +1,13 @@
+# Ignore common version control files
+.git/
+.svn/
+.hg/
+
 # Ignore environment variables file
 .env
 
 # Ignore NuGet cache directory
-.cache
+.cache/
 
 # Ignore log file
 log.txt
@@ -14,8 +19,3 @@ log.txt
 *.session
 *.session-journal
 
-# Ignore directories
-raw_files/
-cache/
-downloads/
-__pycache__/
