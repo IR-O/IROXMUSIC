@@ -1,10 +1,9 @@
 import asyncio
-
 import speedtest
-from pyrogram import filters
+from pyrogram import filters, Client as TelegramClient
 from pyrogram.types import Message
 
-from IroXMusic import app
-from IroXMusic.misc import SUDOERS, LOVE
-from IroXMusic.utils.decorators.language import language
+from config import SUDOERS, LOVE
+from utils.decorators.language import language
+
 
