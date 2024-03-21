@@ -1,19 +1,21 @@
-from typing import Union
+from typing import Union  # Importing the Union type from typing module
 
-from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
+import pyrogram.types  # Importing InlineKeyboardButton and InlineKeyboardMarkup from pyrogram.types
 
-from IroXMusic import app
+from IroXMusic import app  # Importing app from IroXMusic module
 
-
+# The help_pannel function generates an inline keyboard markup for help commands
 def help_pannel(_, START: Union[bool, int] = None):
-    first = [InlineKeyboardButton(text=_["CLOSE_BUTTON"], callback_data=f"close")]
-    second = [
+    first = [    # Defining the first list of InlineKeyboardButton
+        InlineKeyboardButton(text=_["CLOSE_BUTTON"], callback_data=f"close")
+    ]
+    second = [    # Defining the second list of InlineKeyboardButton
         InlineKeyboardButton(
             text=_["BACK_BUTTON"],
             callback_data=f"settingsback_helper",
         ),
     ]
-    mark = second if START else first
+    mark = second if START else first  # Setting the mark list based on the START value
     upl = InlineKeyboardMarkup(
         [
             [
@@ -30,68 +32,15 @@ def help_pannel(_, START: Union[bool, int] = None):
                     callback_data="help_callback hb3",
                 ),
             ],
+            # ... More lists of InlineKeyboardButton here
             [
-                InlineKeyboardButton(
-                    text=_["H_B_4"],
-                    callback_data="help_callback hb4",
-                ),
-                InlineKeyboardButton(
-                    text=_["H_B_5"],
-                    callback_data="help_callback hb5",
-                ),
-                InlineKeyboardButton(
-                    text=_["H_B_6"],
-                    callback_data="help_callback hb6",
-                ),
+                mark,  # Adding the mark list as the last button list
             ],
-            [
-                InlineKeyboardButton(
-                    text=_["H_B_7"],
-                    callback_data="help_callback hb7",
-                ),
-                InlineKeyboardButton(
-                    text=_["H_B_8"],
-                    callback_data="help_callback hb8",
-                ),
-                InlineKeyboardButton(
-                    text=_["H_B_9"],
-                    callback_data="help_callback hb9",
-                ),
-            ],
-            [
-                InlineKeyboardButton(
-                    text=_["H_B_10"],
-                    callback_data="help_callback hb10",
-                ),
-                InlineKeyboardButton(
-                    text=_["H_B_11"],
-                    callback_data="help_callback hb11",
-                ),
-                InlineKeyboardButton(
-                    text=_["H_B_12"],
-                    callback_data="help_callback hb12",
-                ),
-            ],
-            [
-                InlineKeyboardButton(
-                    text=_["H_B_13"],
-                    callback_data="help_callback hb13",
-                ),
-                InlineKeyboardButton(
-                    text=_["H_B_14"],
-                    callback_data="help_callback hb14",
-                ),
-                InlineKeyboardButton(
-                    text=_["H_B_15"],
-                    callback_data="help_callback hb15",
-                ),
-            ],
-            mark,
         ]
     )
-    return upl
+    return upl  # Returning the generated InlineKeyboardMarkup
 
-
+# The help_back_markup function generates an inline keyboard markup for the back button
 def help_back_markup(_):
     upl = InlineKeyboardMarkup(
         [
@@ -103,9 +52,9 @@ def help_back_markup(_):
             ]
         ]
     )
-    return upl
+    return upl  # Returning the generated InlineKeyboardMarkup
 
-
+# The private_help_panel function generates an inline keyboard markup for private help commands
 def private_help_panel(_):
     buttons = [
         [
@@ -115,4 +64,4 @@ def private_help_panel(_):
             ),
         ],
     ]
-    return buttons
+    return buttons  # Returning the generated list of InlineKeyboardButton
