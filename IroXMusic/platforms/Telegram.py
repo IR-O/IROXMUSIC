@@ -16,12 +16,18 @@ from IroXMusic.utils.formatters import (
 
 class TeleAPI:
     def __init__(self):
+        """
+        Initializes the TeleAPI class with the following attributes:
+        - chars_limit: Maximum characters allowed in a single message (default: 4096)
+        - sleep: Sleep time in seconds (default: 5)
+        """
         self.chars_limit = 4096  # Maximum characters allowed in a single message
         self.sleep = 5  # Sleep time in seconds
 
     async def send_split_text(self, message, string):
         """
         Sends a text message split into multiple parts if it exceeds the character limit.
+
         :param message: The Pyrogram Message object
         :param string: The text string to be sent
         :return: True upon successful completion
@@ -35,6 +41,7 @@ class TeleAPI:
     async def get_link(self, message):
         """
         Returns the message link.
+
         :param message: The Pyrogram Message object
         :return: The message link as a string
         """
@@ -43,6 +50,7 @@ class TeleAPI:
     async def get_filename(self, file, audio: Union[bool, str] = None):
         """
         Returns the file name with the appropriate extension.
+
         :param file: The Pyrogram File object
         :param audio: Optional parameter to specify if the file is an audio file
         :return: The file name as a string
@@ -58,6 +66,7 @@ class TeleAPI:
     async def get_duration(self, file):
         """
         Returns the duration of the file in minutes.
+
         :param file: The Pyrogram File object
         :return: The duration as a string
         """
@@ -70,6 +79,7 @@ class TeleAPI:
     async def get_duration(self, filex, file_path):
         """
         Returns the duration of the file in minutes.
+
         :param filex: The Pyrogram File object or Voice object
         :param file_path: The file path as a string
         :return: The duration as a string
@@ -80,7 +90,7 @@ class TeleAPI:
             try:
                 dur = await asyncio.get_event_loop().run_in_executor(
                     None, check_duration, file_path
-                )
+              `enter code here`                )
                 dur = seconds_to_min(dur)
             except:
                 return "Unknown"
@@ -93,6 +103,7 @@ class TeleAPI:
     ):
         """
         Returns the file path with the appropriate file name.
+
         :param audio: Optional parameter to specify if the file is an audio file
         :param video: Optional parameter to specify if the file is a video file
         :return: The file path as a string
@@ -124,6 +135,7 @@ class TeleAPI:
     async def download(self, _, message, mystic, fname):
         """
         Downloads a file and updates the progress.
+
         :param _: Ignored parameter
         :param message: The Pyrogram Message object
         :param mystic: The Pyrogram Chat object
@@ -134,13 +146,4 @@ class TeleAPI:
         higher = [5, 10, 20, 40, 66, 80, 99]
         checker = [5, 10, 20, 40, 66, 80, 99]
         speed_counter = {}
-        if os.path.exists(fname):
-            return True
-
-        async def progress(current, total):
-            if current == total:
-                return
-            nonlocal speed_counter
-            current_time = time.time()
-            if current_time - speed_counter.get('time', 0) > 1:
-                speed
+        if os.path.exists(
