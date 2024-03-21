@@ -26,8 +26,9 @@ async def seek_command(cli, message: Message, _: Any, chat_id: int) -> None:
     :param _: A placeholder for any extra arguments.
     :param chat_id: The ID of the chat.
     """
-    seek_func: Optional[Callable[[int], None]] = None
+    seek_func: Optional[Callable[[int], None]] = None  # Function to perform seek or cseek
 
+    # Check if the user provided a valid query
     if len(message.command) == 1:
         return await message.reply_text(_["admin_20"])
 
@@ -35,21 +36,24 @@ async def seek_command(cli, message: Message, _: Any, chat_id: int) -> None:
     if not query.isnumeric():
         return await message.reply_text(_["admin_21"])
 
+    # Get the playing song information
     playing = db.get(chat_id)
     if not playing:
         return await message.reply_text(_["queue_2"])
 
+    # Calculate the duration and duration played
     duration_seconds = int(playing[0]["seconds"])
     if duration_seconds == 0:
         return await message.reply_text(_["admin_22"])
 
     file_path = playing[0]["file"]
     duration_played = int(playing[0]["played"])
-    duration_to_skip = int(query)
     duration = playing[0]["dur"]
 
+    # Determine if the user wants to seek back or seek forward
     is_seek_back = message.command[0][-2] == "c"
 
+    # Calculate the new position to seek to
     if is_seek_back:
         if (duration_played - duration_to_skip) <= 10:
             return await message.reply_text(
@@ -65,9 +69,11 @@ async def seek_command(cli, message: Message, _: Any, chat_id: int) -> None:
             )
         to_seek = duration_played + duration_to_skip + 1
 
+    # Prepare the reply message
     mystic = await message.reply_text(_["admin_24"])
 
     try:
+        # Perform seek or cseek based on the user's request
         if "vid_" in file_path:
             n, file_path = await YouTube.video(playing[0]["vidid"], True)
             if n == 0:
@@ -80,11 +86,14 @@ async def seek_command(cli, message: Message, _: Any, chat_id: int) -> None:
         if "index_" in file_path:
             file_path = playing[0]["vidid"]
 
+        # Determine the seek function based on the user's request
         if seek_func is None:
             seek_func = Irop.seek if is_seek_back else Irop.cseek
 
+        # Perform the seek or cseek
         await seek_func(chat_id, to_seek)
         await mystic.edit_text(_["admin_25"].format(seconds_to_min(to_seek)))
 
     except Exception as e:
+        # Handle any exceptions
         await mystic.edit_text(f"Error: {str(e)}")
