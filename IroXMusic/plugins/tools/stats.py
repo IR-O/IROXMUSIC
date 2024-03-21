@@ -27,9 +27,12 @@ STATS_IMG_URL_valid = urlparse(config.STATS_IMG_URL).scheme in ("http", "https")
 @app.on_message(filters.command(["stats", "gstats"]) & filters.group & ~BANNED_USERS)
 @language
 async def stats_global(client, message: Message, _):
-    # Create stats_buttons with the sudoers list
+    """
+    This function is a decorator for language translation and is triggered when the "/stats" or "/gstats" command is sent in a group chat.
+    It checks if the user is not banned and then creates stats_buttons with the sudoers list.
+    Finally, it replies to the message with the stats image and caption.
+    """
     upl = stats_buttons(_, True if message.from_user.id in SUDOERS else False)
-    # Reply to the message with the stats image and caption
     await message.reply_photo(
         photo=config.STATS_IMG_URL,
         caption=_["gstats_2"].format(app.mention),
@@ -40,9 +43,12 @@ async def stats_global(client, message: Message, _):
 @app.on_callback_query(filters.regex("stats_back") & ~BANNED_USERS)
 @languageCB
 async def home_stats(client, callback_query: CallbackQuery, _):
-    # Create stats_buttons with the sudoers list
+    """
+    This function is a callback query handler for the "stats_back" regex and is triggered when the user clicks on the "Back" button.
+    It checks if the user is not banned and then creates stats_buttons with the sudoers list.
+    Finally, it edits the message with the updated stats image and caption.
+    """
     upl = stats_buttons(_, True if callback_query.from_user.id in SUDOERS else False)
-    # Edit the message with the updated stats image and caption
     await callback_query.edit_message_text(
         text=_["gstats_2"].format(app.mention),
         reply_markup=upl,
@@ -52,6 +58,11 @@ async def home_stats(client, callback_query: CallbackQuery, _):
 @app.on_callback_query(filters.regex("TopOverall") & ~BANNED_USERS)
 @languageCB
 async def overall_stats(client, callback_query: CallbackQuery, _):
+    """
+    This function is a callback query handler for the "TopOverall" regex and is triggered when the user clicks on the "Overall Stats" button.
+    It checks if the user is not banned and then answers the callback query.
+    It then edits the message with the overall stats text and the stats image.
+    """
     # Answer the callback query
     await callback_query.answer()
     upl = back_stats_buttons(_)
@@ -89,7 +100,11 @@ async def overall_stats(client, callback_query: CallbackQuery, _):
 @app.on_callback_query(filters.regex("bot_stats_sudo") & filters.user(SUDOERS) & ~BANNED_USERS)
 @languageCB
 async def sudo_stats(client, callback_query: CallbackQuery, _):
-    # Answer the callback query
+    """
+    This function is a callback query handler for the "bot_stats_sudo" regex and is triggered when the user clicks on the "Sudo Stats" button.
+    It checks if the user is not banned and is a sudoer, and then answers the callback query.
+    It then edits the message with the sudo stats text.
+    """
     await callback_query.answer()
     upl = stats_buttons(_, True)
     # Edit the message with the sudo stats text
@@ -100,12 +115,4 @@ async def sudo_stats(client, callback_query: CallbackQuery, _):
         platform.system(),
         platform.release(),
         psutil.cpu_count(),
-        psutil.cpu_freq(),
-        round(psutil.virtual_memory().total / (1024.0 ** 3), 2),
-        round(psutil.disk_usage('/').total / (1024.0 ** 3), 2),
-        pytgver,
-        pyrover,
-    )
-    med = InputMediaPhoto(media=config.STATS_IMG_URL, caption=text)
-    try:
-        # Edit the message
+
