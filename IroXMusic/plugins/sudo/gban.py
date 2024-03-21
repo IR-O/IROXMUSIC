@@ -1,24 +1,17 @@
 import asyncio
+from typing import List, Union
 
-from pyrogram import filters
+from pyrogram import filters, StopPropagation
 from pyrogram.errors import FloodWait
-from pyrogram.types import Message
+from pyrogram.types import Message, User
 
-from IroXMusic import app
-from IroXMusic.misc import SUDOERS, LOVE
-from IroXMusic.utils import get_readable_time
-from IroXMusic.utils.database import (
-    add_banned_user,
-    get_banned_count,
-    get_banned_users,
-    get_served_chats,
-    is_banned_user,
-    remove_banned_user,
-)
+from IroXMusic import app, SUDOERS, LOVE
+from IroXMusic.misc import get_readable_time
+from IroXMusic.utils import get_served_chats, is_banned_user, add_banned_user, remove_banned_user, get_banned_users, get_banned_count
 from IroXMusic.utils.decorators.language import language
 from IroXMusic.utils.extraction import extract_user
-from config import BANNED_USERS
 
+BANNED_USERS = set()
 
 @app.on_message(filters.command(["gban", "globalban"]) & SUDOERS & LOVE)
 @language
@@ -33,8 +26,7 @@ async def global_ban(client, message: Message, _):
         return await message.reply_text(_["gban_2"])
     elif user.id in SUDOERS:
         return await message.reply_text(_["gban_3"])
-    is_gbanned = await is_banned_user(user.id)
-    if is_gbanned:
+    if await is_banned_user(user.id):
         return await message.reply_text(_["gban_4"].format(user.mention))
     if user.id not in BANNED_USERS:
         BANNED_USERS.add(user.id)
@@ -49,11 +41,11 @@ async def global_ban(client, message: Message, _):
         try:
             await app.ban_chat_member(chat_id, user.id)
             number_of_chats += 1
+            await add_banned_user(user.id)
         except FloodWait as fw:
             await asyncio.sleep(int(fw.value))
         except:
             continue
-    await add_banned_user(user.id)
     await message.reply_text(
         _["gban_6"].format(
             app.mention,
@@ -66,6 +58,7 @@ async def global_ban(client, message: Message, _):
         )
     )
     await mystic.delete()
+    await message.stop_propagation()
 
 
 @app.on_message(filters.command(["ungban"]) & SUDOERS & LOVE)
@@ -75,8 +68,7 @@ async def global_un(client, message: Message, _):
         if len(message.command) != 2:
             return await message.reply_text(_["general_1"])
     user = await extract_user(message)
-    is_gbanned = await is_banned_user(user.id)
-    if not is_gbanned:
+    if not await is_banned_user(user.id):
         return await message.reply_text(_["gban_7"].format(user.mention))
     if user.id in BANNED_USERS:
         BANNED_USERS.remove(user.id)
@@ -91,13 +83,14 @@ async def global_un(client, message: Message, _):
         try:
             await app.unban_chat_member(chat_id, user.id)
             number_of_chats += 1
+            await remove_banned_user(user.id)
         except FloodWait as fw:
             await asyncio.sleep(int(fw.value))
         except:
             continue
-    await remove_banned_user(user.id)
     await message.reply_text(_["gban_9"].format(user.mention, number_of_chats))
     await mystic.delete()
+    await message.stop_propagation()
 
 
 @app.on_message(filters.command(["gbannedusers", "gbanlist"]) & SUDOERS & LOVE)
