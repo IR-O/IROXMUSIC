@@ -1,4 +1,5 @@
 # Importing required modules
+import re
 from pykeyboard import InlineKeyboard  # Importing InlineKeyboard class from pykeyboard library
 from pyrogram import filters  # Importing filters class from pyrogram library
 from pyrogram.types import InlineKeyboardButton, Message, CallbackQuery  # Importing required types from pyrogram library
@@ -48,4 +49,7 @@ async def lanuagecb(client, CallbackQuery, _):
 async def language_markup(client, CallbackQuery, _):
     langauge = CallbackQuery.data.split(":")[1]  # Extracting the selected language code
     old = await get_lang(CallbackQuery.message.chat.id)  # Getting the current language code
-
+    if old == langauge:  # If the selected language is the same as the current language
+        return  # Return without doing anything
+    await set_lang(CallbackQuery.message.chat.id, langauge)  # Setting the new language
+    await CallbackQuery.answer(_["lang_2"], show_alert=True)  # Showing a success message
