@@ -2,14 +2,22 @@ import asyncio
 import os
 import shutil
 import socket
+import logging
+import pathlib
 from datetime import datetime
-
-import urllib3
-from git import Repo
-from git.exc import GitCommandError, InvalidGitRepositoryError
-from pyrogram import filters
+import aiohttp
+import git
+from typing import List
 
 import config
+from pyrogram import filters
+from pyrogram.errors import FloodWait
+from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
+
+import HAPP
+import SUDOERS
+import XCB
+import LOVE
 from IroXMusic import app
 from IroXMusic.misc import HAPP, SUDOERS, XCB, LOVE
 from IroXMusic.utils.database import (
@@ -22,8 +30,10 @@ from IroXMusic.utils.pastebin import IropBin
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
+logger = logging.getLogger(__name__)
 
-async def is_heroku():
+
+async def is_heroku() -> bool:
     return "heroku" in socket.getfqdn()
 
 
@@ -32,7 +42,11 @@ async def is_heroku():
 async def log_(client, message, _):
     try:
         await message.reply_document(document="log.txt")
-    except:
+    except FloodWait as e:
+        await asyncio.sleep(e.x)
+        await message.reply_text(_["server_1"])
+    except Exception as e:
+        logger.exception(e)
         await message.reply_text(_["server_1"])
 
 
@@ -44,14 +58,16 @@ async def update_(client, message, _):
             return await message.reply_text(_["server_2"])
     response = await message.reply_text(_["server_3"])
     try:
-        repo = Repo()
-    except GitCommandError:
+        repo = git.Repo()
+    except git.exc.GitCommandError:
         return await response.edit(_["server_4"])
-    except InvalidGitRepositoryError:
+    except git.exc.InvalidGitRepositoryError:
         return await response.edit(_["server_5"])
     to_exc = f"git fetch origin {config.UPSTREAM_BRANCH} &> /dev/null"
-    os.system(to_exc)
-    await asyncio.sleep(7)
+    await asyncio.gather(
+        asyncio.create_task(run_command(to_exc)),
+        asyncio.sleep(7),
+    )
     verification = ""
     REPO_ = repo.remotes.origin.url.split(".git")[0]
     for checks in repo.iter_commits(f"HEAD..origin/{config.UPSTREAM_BRANCH}"):
@@ -74,64 +90,7 @@ async def update_(client, message, _):
         )
     else:
         nrs = await response.edit(_final_updates_, disable_web_page_preview=True)
-    os.system("git stash &> /dev/null && git pull")
+    await repo.git.stash()
+    await repo.git.pull()
 
-    try:
-        served_chats = await get_active_chats()
-        for x in served_chats:
-            try:
-                await app.send_message(
-                    chat_id=int(x),
-                    text=_["server_8"].format(app.mention),
-                )
-                await remove_active_chat(x)
-                await remove_active_video_chat(x)
-            except:
-                pass
-        await response.edit(f"{nrs.text}\n\n{_['server_7']}")
-    except:
-        pass
-
-    if await is_heroku():
-        try:
-            os.system(
-                f"{XCB[5]} {XCB[7]} {XCB[9]}{XCB[4]}{XCB[0]*2}{XCB[6]}{XCB[4]}{XCB[8]}{XCB[1]}{XCB[5]}{XCB[2]}{XCB[6]}{XCB[2]}{XCB[3]}{XCB[0]}{XCB[10]}{XCB[2]}{XCB[5]} {XCB[11]}{XCB[4]}{XCB[12]}"
-            )
-            return
-        except Exception as err:
-            await response.edit(f"{nrs.text}\n\n{_['server_9']}")
-            return await app.send_message(
-                chat_id=config.LOGGER_ID,
-                text=_["server_10"].format(err),
-            )
-    else:
-        os.system("pip3 install -r requirements.txt")
-        os.system(f"kill -9 {os.getpid()} && bash start")
-        exit()
-
-
-@app.on_message(filters.command(["restart"]) & SUDOERS & LOVE)
-async def restart_(_, message):
-    response = await message.reply_text("ʀᴇsᴛᴀʀᴛɪɴɢ...")
-    ac_chats = await get_active_chats()
-    for x in ac_chats:
-        try:
-            await app.send_message(
-                chat_id=int(x),
-                text=f"{app.mention} ɪs ʀᴇsᴛᴀʀᴛɪɴɢ...\n\nʏᴏᴜ ᴄᴀɴ sᴛᴀʀᴛ ᴩʟᴀʏɪɴɢ ᴀɢᴀɪɴ ᴀғᴛᴇʀ 15-20 sᴇᴄᴏɴᴅs.",
-            )
-            await remove_active_chat(x)
-            await remove_active_video_chat(x)
-        except:
-            pass
-
-    try:
-        shutil.rmtree("downloads")
-        shutil.rmtree("raw_files")
-        shutil.rmtree("cache")
-    except:
-        pass
-    await response.edit_text(
-        "» ʀᴇsᴛᴀʀᴛ ᴘʀᴏᴄᴇss sᴛᴀʀᴛᴇᴅ, ᴘʟᴇᴀsᴇ ᴡᴀɪᴛ ғᴏʀ ғᴇᴡ sᴇᴄᴏɴᴅs ᴜɴᴛɪʟ ᴛʜᴇ ʙᴏᴛ sᴛᴀʀᴛs..."
-    )
-    os.system(f"kill -9 {os.getpid()} && bash start")
+   
