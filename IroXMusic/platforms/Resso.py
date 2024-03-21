@@ -1,9 +1,9 @@
 import re
-from typing import Union
+from typing import Union, Dict
 
 import aiohttp
 from bs4 import BeautifulSoup
-from youtubesearchpython.__future__ import VideosSearch
+from youtubesearchpython import VideosSearch  # Corrected import statement
 
 class RessoAPI:
     """
@@ -24,8 +24,9 @@ class RessoAPI:
         :param link: The link to check for validity.
         :return: True if the link is valid, False otherwise.
         """
+        return bool(self.regex.match(link))
 
-    async def track(self, url: str, playid: Union[bool, str] = None) -> dict:
+    async def track(self, url: str, playid: Union[bool, str] = None) -> Dict[str, Union[str, int]]:
         """
         Fetch track details from a given Resso link.
 
